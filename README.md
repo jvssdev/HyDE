@@ -180,8 +180,8 @@ For more information about themes, visit [jvssdev/hyde-themes](https://github.co
 [![Rosé-Pine](https://placehold.co/130x30/c4a7e7/191724?text=Rosé-Pine&font=Oswald)](https://github.com/jvssdev/hyde-themes/tree/Rose-Pine)
 [![Synth-Wave](https://placehold.co/130x30/495495/ff7edb?text=Synth-Wave&font=Oswald)](https://github.com/jvssdev/hyde-themes/tree/Synth-Wave)
 [![Tokyo-Night](https://placehold.co/130x30/7aa2f7/24283b?text=Tokyo-Night&font=Oswald)](https://github.com/jvssdev/hyde-themes/tree/Tokyo-Night)
-[![Amethyst Aura](https://placehold.co/130x30/5D69CE/A45785?text=Amethyst+Aura&font=Oswald)](https://github.com/jvssdev/hyde-themes/tree/Amethyst-Aura)
-[![[Green Lush](https://placehold.co/130x30/89E574/153550?text=Green+Lush&font=Oswald)](https://github.com/jvssdev/hyde-themes/tree/Green-Lush)
+[![Amethyst-Aura](https://placehold.co/130x30/5D69CE/A45785?text=Amethyst+Aura&font=Oswald)](https://github.com/jvssdev/hyde-themes/tree/Amethyst-Aura)
+[![Green-Lush](https://placehold.co/130x30/89E574/153550?text=Green+Lush&font=Oswald)](https://github.com/jvssdev/hyde-themes/tree/Green-Lush)
   </td></tr></table>
 </div>
 
