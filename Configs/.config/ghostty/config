@@ -1,1 +1,7 @@
+# Add your custom configuration in here. 
+config-file = hyde 
+
+#gtk-adwaita = false
+# gtk-titlebar = true
+
 family = JetBrainsMono Nerd Font
