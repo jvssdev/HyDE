@@ -75,6 +75,9 @@ O|${HOME}/.local/share/fastfetch/presets|hyde|fastfetch
 S|${HOME}/.config/kitty|hyde.conf theme.conf|kitty
 P|${HOME}/.config/kitty|kitty.conf|kitty
 
+
+S|${HOME}/.config/ghostty|config ghostty.dcol hyde|kitty
+
  Shell 
 P|${HOME}/.config|fish|fish
 P|${HOME}|.zshrc .user.zsh|zsh  
