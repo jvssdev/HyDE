@@ -83,6 +83,7 @@ zen-browser-bin                                        # browser
 vivaldi                                                # browser
 btop                                                   # monitor of system resources 
 ghostty                                                # terminal
+foot                                                   # terminal backup for VMs
 
 # --------------------------------------------------- // Shell
 eza|zsh                                                # file lister for zsh
