@@ -57,6 +57,9 @@ P|${HOME}/.config/Code - OSS/User|settings.json|code
 P|${HOME}/.config/Code/User|settings.json|visual-studio-code-bin
 P|${HOME}/.config/VSCodium/User|settings.json|vscodium
 
+P|${HOME}/.config/nvim/init.lua|neovim
+
+
  Bar 
 P|${HOME}/.config/waybar|config.ctl|waybar
 S|${HOME}/.config/waybar|modules config.jsonc theme.css style.css|waybar
