@@ -1,7 +1,7 @@
 # This is a hyde specific config file
 # Edit the the "ghostty/config" instead to override this settings
 window-decoration = true
-font-size = 8
+font-size = 12
 
 # source the theme
 config-file = theme
