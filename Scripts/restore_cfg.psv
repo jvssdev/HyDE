@@ -76,7 +76,7 @@ S|${HOME}/.config/kitty|hyde.conf theme.conf|kitty
 P|${HOME}/.config/kitty|kitty.conf|kitty
 
 
-S|${HOME}/.config/ghostty|config ghostty.dcol hyde|kitty
+S|${HOME}/.config/ghostty|config ghostty.dcol hyde|ghostty
 
  Shell 
 P|${HOME}/.config|fish|fish
