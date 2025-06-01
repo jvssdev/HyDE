@@ -57,7 +57,11 @@ P|${HOME}/.config/Code - OSS/User|settings.json|code
 P|${HOME}/.config/Code/User|settings.json|visual-studio-code-bin
 P|${HOME}/.config/VSCodium/User|settings.json|vscodium
 
-P|${HOME}/.config/nvim/init.lua|neovim
+ Neovim 
+P|${HOME}/.config/nvim|init.lua lazy-lock.json|neovim
+P|${HOME}/.config/nvim/lua|keymaps.lua lazy-bootstrap.lua lazy-plugins.lua options.lua|neovim
+P|${HOME}/.config/nvim/lua/custom/plugins|bufferline.lua catppuccin.lua dbee.lua init.lua kanagawa.lua lualine.lua nui.lua tokyodark.lua vesper.lua|neovim
+P|${HOME}/.config/nvim/lua/kickstart/plugins|autopairs.lua cmp.lua conform.lua debug.lua gitsigns.lua indent_line.lua lint.lua lspconfig.lua mini.lua neo-tree.lua telescope.lua todo-comments.lua tokyonight.lua treesitter.lua which-key.lua|neovim
 
 
  Bar 
