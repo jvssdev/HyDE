@@ -128,16 +128,18 @@ vim.opt.fileencoding = "utf-8"
 --
 --
 
-local vim_dir = vim.fn.fnamemodify(vim.env.MYVIMRC, ":h")
-local colorscheme_path = vim_dir .. "../nvim/lua/custom/plugins/wallbash.vim"
+--local wallbash_path = vim.fn.stdpath("config") .. "/lua/custom/plugins/wallbash.vim"
 
-local wayland = os.getenv("XDG_SESSION_TYPE") == "wayland"
-local hyprland = os.getenv("XDG_CURRENT_DESKTOP") == "Hyprland"
+--local wayland = os.getenv("XDG_SESSION_TYPE") == "wayland"
+--local hyprland = os.getenv("XDG_CURRENT_DESKTOP") == "Hyprland"
 
-if wayland and hyprland then
-  if vim.fn.filereadable(colorscheme_path) == 1 then
-    vim.cmd("colorscheme wallbash")
-  end
-else
-  vim.cmd("colorscheme catppuccin")
-end
+--if wayland and hyprland then
+-- if vim.fn.filereadable(wallbash_path) == 1 then
+-- vim.cmd("colorscheme wallbash")
+-- end
+--else
+--vim.cmd("colorscheme catppuccin")
+--end
+--
+--
+vim.cmd("colorscheme catppuccin")
