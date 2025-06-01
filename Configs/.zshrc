@@ -12,5 +12,5 @@
 
 #  This is your file 
 # Add your configurations here
-# export EDITOR=nvim
-export EDITOR=code
+export EDITOR=nvim
+#export EDITOR=code
