@@ -4,4 +4,4 @@ config-file = hyde
 #gtk-adwaita = false
 # gtk-titlebar = true
 
-family = JetBrainsMono Nerd Font
+font-family = JetBrainsMono Nerd Font
