@@ -60,7 +60,7 @@ P|${HOME}/.config/VSCodium/User|settings.json|vscodium
  Neovim 
 S|${HOME}/.config/nvim|init.lua lazy-lock.json|neovim
 S|${HOME}/.config/nvim/lua|keymaps.lua lazy-bootstrap.lua lazy-plugins.lua options.lua|neovim
-S|${HOME}/.config/nvim/lua/custom/plugins|bufferline.lua catppuccin.lua dbee.lua init.lua kanagawa.lua lualine.lua nui.lua tokyodark.lua vesper.lua|neovim
+S|${HOME}/.config/nvim/lua/custom/plugins|bufferline.lua catppuccin.lua dbee.lua init.lua kanagawa.lua lualine.lua nui.lua tokyodark.lua vesper.lua wallbash.vim|neovim
 S|${HOME}/.config/nvim/lua/kickstart/plugins|autopairs.lua cmp.lua conform.lua debug.lua gitsigns.lua indent_line.lua lint.lua lspconfig.lua mini.lua neo-tree.lua telescope.lua todo-comments.lua tokyonight.lua treesitter.lua which-key.lua|neovim
 
  Bar 
