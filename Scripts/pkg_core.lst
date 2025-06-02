@@ -57,6 +57,9 @@ ttf-nerd-fonts-symbols
 ttf-jetbrains-mono-nerd
 
 
+# --------------------------------------------------- // Dev
+nodejs 
+npm
 
 # --------------------------------------------------- // Theming
 nwg-look                                               # gtk configuration tool
