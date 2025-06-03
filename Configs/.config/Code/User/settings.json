@@ -1,22 +1,24 @@
 {
     "workbench.colorTheme": "Wallbash",
     "window.menuBarVisibility": "toggle",
-    "editor.fontSize": 12,
-    "editor.scrollbar.vertical": "hidden",
-    "editor.scrollbar.verticalScrollbarSize": 0,
+    "editor.fontSize": 16,
+    "editor.scrollbar.verticalScrollbarSize": 10,
     "security.workspace.trust.untrustedFiles": "newWindow",
     "security.workspace.trust.startupPrompt": "never",
     "security.workspace.trust.enabled": false,
     "editor.minimap.side": "left",
-  "editor.fontFamily": "'JetbrainsMono Nerd Font','Maple Mono', monospace",
+    "editor.fontFamily": "'JetbrainsMono Nerd Font','Maple Mono', monospace",
     "extensions.autoUpdate": false,
-    "workbench.statusBar.visible": false,
-    "terminal.external.linuxExec": "kitty",
+    "workbench.statusBar.visible": true,
+    "terminal.external.linuxExec": "ghostty",
     "terminal.explorerKind": "both",
     "terminal.sourceControlRepositoriesKind": "both",
     "telemetry.telemetryLevel": "off",
     "workbench.activityBar.location": "top",
     "window.customTitleBarVisibility": "auto",
-    "workbench.sideBar.location": "right"
-  }
+    "extensions.experimental.affinity": {
+      "asvetliakovwhichkey.vscode-neovim": 1
+    },
+    "vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim"
+}
   

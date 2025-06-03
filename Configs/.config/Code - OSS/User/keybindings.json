@@ -1,0 +1,17 @@
+[
+  {
+    "key": "space e",
+    "command": "workbench.view.explorer",
+    "when": "!explorerViewletVisible && !editorTextFocus && !inputFocus"
+  },
+  {
+    "key": "space e",
+    "command": "workbench.files.action.focusFilesExplorer",
+    "when": "explorerViewletVisible && !explorerViewletFocus && !editorTextFocus && !inputFocus"
+  },
+  {
+    "key": "space e",
+    "command": "workbench.action.toggleSidebarVisibility",
+    "when": "explorerViewletFocus && !editorTextFocus && !inputFocus"
+  }
+]
