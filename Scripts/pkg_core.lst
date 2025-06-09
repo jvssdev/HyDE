@@ -60,6 +60,9 @@ ttf-jetbrains-mono-nerd
 # --------------------------------------------------- // Dev
 nodejs 
 npm
+ghostscript
+tree-sitter-cli
+lazygit
 
 # --------------------------------------------------- // Theming
 nwg-look                                               # gtk configuration tool
