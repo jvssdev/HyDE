@@ -63,6 +63,10 @@ S|${HOME}/.config/nvim/lua|keymaps.lua lazy-bootstrap.lua lazy-plugins.lua optio
 S|${HOME}/.config/nvim/lua/custom/plugins|bufferline.lua catppuccin.lua dbee.lua init.lua kanagawa.lua lualine.lua nui.lua tokyodark.lua vesper.lua wallbash.vim|neovim
 S|${HOME}/.config/nvim/lua/kickstart/plugins|autopairs.lua cmp.lua conform.lua debug.lua gitsigns.lua indent_line.lua lint.lua lspconfig.lua mini.lua neo-tree.lua telescope.lua todo-comments.lua tokyonight.lua treesitter.lua which-key.lua|neovim
 
+
+ Lazygit 
+S|${HOME}/.config/lazygit|config.yml|lazygit
+
  Bar 
 P|${HOME}/.config/waybar|config.ctl|waybar
 S|${HOME}/.config/waybar|modules config.jsonc theme.css style.css|waybar
