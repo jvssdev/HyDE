@@ -22,18 +22,15 @@ return {
           lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
         }
       end,
+
       formatters_by_ft = {
-        lua = { "stylua" },
-        python = { "isort", "black" },
-        javascript = { { "prettierd", "prettier" } },
-        typescript = { { "prettierd", "prettier" } },
-        javascriptreact = { { "prettierd", "prettier" } },
-        typescriptreact = { { "prettierd", "prettier" } },
-        html = { "htmlbeautifier" },
-        json = { { "prettierd", "prettier" } },
-        astro = { { "prettierd", "prettier" } },
-        markdown = { { "prettierd", "prettier" } },
-        go = { "gofmt" },
+        javascript = { "prettierd", "prettier" },
+        typescript = { "prettierd", "prettier" },
+        javascriptreact = { "prettierd", "prettier" },
+        typescriptreact = { "prettierd", "prettier" },
+        json = { "prettierd", "prettier" },
+        astro = { "prettierd", "prettier" },
+        markdown = { "prettierd", "prettier" },
       },
       formatters = {
         stylua = {

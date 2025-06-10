@@ -63,6 +63,8 @@ npm
 ghostscript
 tree-sitter-cli
 lazygit
+markdownlint-cli
+prettierd
 
 # --------------------------------------------------- // Theming
 nwg-look                                               # gtk configuration tool
