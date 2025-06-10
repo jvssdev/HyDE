@@ -133,3 +133,7 @@ S|${HOME}/.config/hypr|hyprlock|hyprlock
 
  Idle daemon 
 P|${HOME}/.config/hypr|hypridle.conf|hypridle
+
+ Obsidian theme for HyDE
+S|${HOME}/Documents/Obsidian Vault/.obsidian/themes|Wallbash|obsidian
+S|${HOME}/.config/hyde/wallbash/always|obsidian.dcol|obsidian
