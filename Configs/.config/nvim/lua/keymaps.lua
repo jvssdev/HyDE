@@ -70,3 +70,7 @@ end, { desc = "File Explorer" })
 map("n", "<leader>t", function()
   vim.cmd("tabnew | terminal")
 end, { desc = "Open terminal in a new tab" })
+
+-- Noice
+map("n", "<leader>nd", "<cmd>NoiceDismiss<CR>", { desc = "Dismiss Noice Message" })
+map("n", "<leader>nt", "<cmd>Telescope noice<CR>", { desc = "Noice Telescope" })

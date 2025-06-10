@@ -8,10 +8,16 @@ return {
         -- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
     },
     config = function()
-        vim.fn.sign_define("DiagnosticSignError", { text = " ", texthl = "DiagnosticSignError" })
-        vim.fn.sign_define("DiagnosticSignWarn", { text = " ", texthl = "DiagnosticSignWarn" })
-        vim.fn.sign_define("DiagnosticSignInfo", { text = " ", texthl = "DiagnosticSignInfo" })
-        vim.fn.sign_define("DiagnosticSignHint", { text = "󰌵", texthl = "DiagnosticSignHint" })
+        vim.diagnostic.config({
+            signs = {
+                text = {
+                    [vim.diagnostic.severity.ERROR] = " ",
+                    [vim.diagnostic.severity.WARN]  = " ",
+                    [vim.diagnostic.severity.INFO]  = " ",
+                    [vim.diagnostic.severity.HINT]  = "󰌵",
+                },
+            },
+        })
 
         require("neo-tree").setup({
             close_if_last_window = false, -- Close Neo-tree if it is the last window left in the tab
@@ -19,8 +25,8 @@ return {
             enable_git_status = true,
             enable_diagnostics = true,
             open_files_do_not_replace_types = { "terminal", "trouble", "qf" }, -- when opening files, do not use windows containing these filetypes or buftypes
-            sort_case_insensitive = false,                               -- used when sorting files and directories in the tree
-            sort_function = nil,                                         -- use a custom function for sorting files and directories in the tree
+            sort_case_insensitive = false,                                     -- used when sorting files and directories in the tree
+            sort_function = nil,                                               -- use a custom function for sorting files and directories in the tree
             source_selector = {
                 winbar = false,
                 sources = {
@@ -210,9 +216,9 @@ return {
                     },
                 },
                 follow_current_file = {
-                    enabled = true,    -- This will find and focus the file in the active buffer every time
+                    enabled = true,            -- This will find and focus the file in the active buffer every time
                     -- the current file is changed while the tree is open.
-                    leave_untouched = false, -- This will not close the tree, but instead leave it where it is
+                    leave_untouched = false,   -- This will not close the tree, but instead leave it where it is
                 },
                 use_libuv_file_watcher = true, -- This will use the OS file watcher to detect file changes
             },
