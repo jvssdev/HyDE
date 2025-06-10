@@ -207,7 +207,7 @@ Description: A dynamic theme with a focus on readability and contrast.
   }
   
   body {
-	--font-monospace: 'Fira Code', 'Source Code Pro', monospace;
+	--font-monospace: 'JetbrainsMono Nerd Font', 'Noto Sans', monospace;
   }
   
   mjx-container[jax='CHTML'] {
