@@ -141,7 +141,7 @@ S|${HOME}/.config/hyde/wallbash/always|obsidian.dcol|obsidian
  Tmux 
 
 S|${HOME}/.config/tmux/conf|tmux.conf|tmux
-S|${HOME}/.config/tmux/conf|binds.conf options.conf plugins.con|tmux
+S|${HOME}/.config/tmux/conf|binds.conf options.conf plugins.conf|tmux
 S|${HOME}/.config/tmux/plugins/tpm|.gitattributes .gitattributes .gitmodules .travis.yml LICENSE.md README.md CHANGELOG.md HOW_TO_PLUGIN.md tpm|tmux
 S|${HOME}/.config/tmux/plugins/tpm/bin|clean_plugins install_plugins update_plugins|tmux
 S|${HOME}/.config/tmux/plugins/tpm/bindings|clean_plugins install_plugins update_plugins|tmux
