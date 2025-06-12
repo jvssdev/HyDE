@@ -142,10 +142,10 @@ S|${HOME}/.config/hyde/wallbash/always|obsidian.dcol|obsidian
 
 S|${HOME}/.config/tmux/conf|tmux.conf|tmux
 S|${HOME}/.config/tmux/conf|binds.conf options.conf plugins.con|tmux
-S|${HOME}/.config/tmux/tpm|.gitattributes .gitattributes .gitmodules .travis.yml LICENSE.md README.md CHANGELOG.md HOW_TO_PLUGIN.md tpm|tmux
-S|${HOME}/.config/tmux/tpm/bin|clean_plugins install_plugins update_plugins|tmux
-S|${HOME}/.config/tmux/tpm/bindings|clean_plugins install_plugins update_plugins|tmux
-S|${HOME}/.config/tmux/tpm/docs|automatic_tpm_installation.md changing_plugins_install_dir.md how_to_create_plugin.md managing_plugins_via_cmd_line.md tpm_not_working.md|tmux
-S|${HOME}/.config/tmux/tpm/lib/tmux-test|tmux
-S|${HOME}/.config/tmux/tpm/scipts|check_tmux_version.sh clean_plugins.sh install_plugins.sh source_plugins.sh update_plugin_prompt_handler.sh update_plugin.sh variables.sh|tmux
-S|${HOME}/.config/tmux/tpm/scripts/helpers|plugin_functions.sh shell_echo_functions.sh tmux_echo_functions.sh tmux_utils.sh utility.sh|tmux
+S|${HOME}/.config/tmux/plugins/tpm|.gitattributes .gitattributes .gitmodules .travis.yml LICENSE.md README.md CHANGELOG.md HOW_TO_PLUGIN.md tpm|tmux
+S|${HOME}/.config/tmux/plugins/tpm/bin|clean_plugins install_plugins update_plugins|tmux
+S|${HOME}/.config/tmux/plugins/tpm/bindings|clean_plugins install_plugins update_plugins|tmux
+S|${HOME}/.config/tmux/plugins/tpm/docs|automatic_tpm_installation.md changing_plugins_install_dir.md how_to_create_plugin.md managing_plugins_via_cmd_line.md tpm_not_working.md|tmux
+S|${HOME}/.config/tmux/plugins/tpm/lib/tmux-test|tmux
+S|${HOME}/.config/tmux/plugins/tpm/scipts|check_tmux_version.sh clean_plugins.sh install_plugins.sh source_plugins.sh update_plugin_prompt_handler.sh update_plugin.sh variables.sh|tmux
+S|${HOME}/.config/tmux/plugins/tpm/scripts/helpers|plugin_functions.sh shell_echo_functions.sh tmux_echo_functions.sh tmux_utils.sh utility.sh|tmux
