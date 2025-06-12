@@ -96,6 +96,7 @@ keepassxc                                              # 2FA app
 bitwarden                                              # password manager
 obsidian                                               # markdown app
 syncthing                                              # cluster synchronization 
+tmux                                                   # Terminal multiplexer
 
 # --------------------------------------------------- // Shell
 eza|zsh                                                # file lister for zsh
@@ -105,6 +106,6 @@ starship|zsh                                           # customizable shell prom
 eza|fish                                               # file lister for fish
 starship|fish                                          # customizable shell prompt
 fastfetch                                              # system information fetch tool
-
+zoxide                                                 # A smarter cd command for the terminal
 # --------------------------------------------------- // HyDE
 hypridle                                               # idle daemon
