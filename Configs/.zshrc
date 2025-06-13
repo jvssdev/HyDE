@@ -27,3 +27,8 @@ function sesh-sessions() {
     sesh connect $session
   }
 }
+# Alt-s to open a fzf prompt to connect to tmux a session using sesh.
+zle     -N             sesh-sessions
+bindkey -M emacs '\es' sesh-sessions
+bindkey -M vicmd '\es' sesh-sessions
+bindkey -M viins '\es' sesh-sessions
