@@ -65,6 +65,7 @@ tree-sitter-cli
 lazygit
 markdownlint-cli
 prettierd
+sesh-bin
 
 # --------------------------------------------------- // Theming
 nwg-look                                               # gtk configuration tool
