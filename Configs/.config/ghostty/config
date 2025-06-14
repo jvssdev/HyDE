@@ -5,3 +5,6 @@ config-file = hyde
 # gtk-titlebar = true
 
 font-family = JetBrainsMono Nerd Font
+
+# <perfix>+t (open sesh picker)
+keybind = alt+s = text:\x01\x54
