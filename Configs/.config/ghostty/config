@@ -1,10 +1,8 @@
-# Add your custom configuration in here. 
+  Add your custom configuration in here. 
 config-file = hyde 
 
 #gtk-adwaita = false
 # gtk-titlebar = true
 
 font-family = JetBrainsMono Nerd Font
-
-# <perfix>+t (open sesh picker)
-keybind = alt+s = text:\x01\x54
+keybind = super+t = text:\x01\x54
