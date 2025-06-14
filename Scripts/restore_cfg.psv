@@ -143,13 +143,14 @@ S|${HOME}/.config/hyde/wallbash/always|obsidian.dcol|obsidian
 S|${HOME}/.config/tmux|tmux.conf|tmux
 S|${HOME}/.config/tmux/conf|tmux.conf|tmux
 S|${HOME}/.config/tmux/conf|binds.conf options.conf plugins.conf|tmux
-S|${HOME}/.config/tmux/plugins/tpm|.gitattributes .gitattributes .gitmodules .travis.yml LICENSE.md README.md CHANGELOG.md HOW_TO_PLUGIN.md tpm|tmux
-S|${HOME}/.config/tmux/plugins/tpm/bin|clean_plugins install_plugins update_plugins|tmux
-S|${HOME}/.config/tmux/plugins/tpm/bindings|clean_plugins install_plugins update_plugins|tmux
-S|${HOME}/.config/tmux/plugins/tpm/docs|automatic_tpm_installation.md changing_plugins_install_dir.md how_to_create_plugin.md managing_plugins_via_cmd_line.md tpm_not_working.md|tmux
-S|${HOME}/.config/tmux/plugins/tpm/lib/tmux-test|tmux
-S|${HOME}/.config/tmux/plugins/tpm/scripts|check_tmux_version.sh clean_plugins.sh install_plugins.sh source_plugins.sh update_plugin_prompt_handler.sh update_plugin.sh variables.sh|tmux
-S|${HOME}/.config/tmux/plugins/tpm/scripts/helpers|plugin_functions.sh shell_echo_functions.sh tmux_echo_functions.sh tmux_utils.sh utility.sh|tmux
-S|${HOME}/.config/tmux/plugins/tpm/tests/helpers|tpm.sh|tmux
-S|${HOME}/.config/tmux/plugins/tpm/tests|expect_failed_plugin_download expect_successful_clean_plugins expect_successful_multiple_plugins_download expect_successful_plugin_download expect_successful_update_of_a_single_plugin expect_successful_update_of_all_plugins test_plugin_clean.sh test_plugin_installation_legacy.sh test_plugin_installation.sh test_plugin_sourcing.sh test_plugin_update.sh|tmux
+
+P|${HOME}/.config/tmux/plugins/tpm|.gitattributes .gitattributes .gitmodules .travis.yml LICENSE.md README.md CHANGELOG.md HOW_TO_PLUGIN.md tpm|tmux
+P|${HOME}/.config/tmux/plugins/tpm/bin|clean_plugins install_plugins update_plugins|tmux
+P|${HOME}/.config/tmux/plugins/tpm/bindings|clean_plugins install_plugins update_plugins|tmux
+P|${HOME}/.config/tmux/plugins/tpm/docs|automatic_tpm_installation.md changing_plugins_install_dir.md how_to_create_plugin.md managing_plugins_via_cmd_line.md tpm_not_working.md|tmux
+P|${HOME}/.config/tmux/plugins/tpm/lib/tmux-test|tmux
+P|${HOME}/.config/tmux/plugins/tpm/scripts|check_tmux_version.sh clean_plugins.sh install_plugins.sh source_plugins.sh update_plugin_prompt_handler.sh update_plugin.sh variables.sh|tmux
+P|${HOME}/.config/tmux/plugins/tpm/scripts/helpers|plugin_functions.sh shell_echo_functions.sh tmux_echo_functions.sh tmux_utils.sh utility.sh|tmux
+P|${HOME}/.config/tmux/plugins/tpm/tests/helpers|tpm.sh|tmux
+P|${HOME}/.config/tmux/plugins/tpm/tests|expect_failed_plugin_download expect_successful_clean_plugins expect_successful_multiple_plugins_download expect_successful_plugin_download expect_successful_update_of_a_single_plugin expect_successful_update_of_all_plugins test_plugin_clean.sh test_plugin_installation_legacy.sh test_plugin_installation.sh test_plugin_sourcing.sh test_plugin_update.sh|tmux
 
