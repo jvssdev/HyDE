@@ -1,8 +1,7 @@
-  Add your custom configuration in here. 
+#Add your custom configuration in here. 
 config-file = hyde 
 
 #gtk-adwaita = false
 # gtk-titlebar = true
 
 font-family = JetBrainsMono Nerd Font
-keybind = super+t = text:\x01\x54
