@@ -139,9 +139,10 @@ P|${HOME}/Documents/Obsidian Vault/.obsidian/themes|Wallbash|obsidian
 S|${HOME}/.config/hyde/wallbash/always|obsidian.dcol|obsidian
 
  Zeb Browser 
-S|${HOME}/.config/zen/chrome|userChrome.css userContent.css|zen-browser
-S|${HOME}/.config/zen/userjs|user.js|zen-browser
-S|${HOME}/.config/zen/Profiles/${ZEN_PROFILE}|*|zen-browser
+S|${HOME}/.zen/${ZEN_PROFILE}/chrome|userChrome.css userContent.css|zen-browser
+S|${HOME}/.zen/${ZEN_PROFILE}/userjs|user.js|zen-browser
+S|${HOME}/.zen/${ZEN_PROFILE}|*|zen-browser
+
 
  Tmux 
 
