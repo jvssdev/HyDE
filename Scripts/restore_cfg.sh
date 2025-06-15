@@ -1,71 +1,88 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
-
 echo "Starting restore_cfg.sh"
 
-# Define the path to the base repo and config file
-REPO="$(dirname "$(realpath "$0")")/.."
-CONFIG_FILE="${REPO}/Scripts/restore_cfg.psv"
+# Get script directory
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Path to the .psv file
+psv_file="${script_dir}/../restore_cfg.psv"
 
-# Define the backup directory
-TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-BACKUP_DIR="${HOME}/backup_${TIMESTAMP}"
+# Detect Zen profile automatically
+zen_profile=$(find ~/.zen -maxdepth 1 -type d -name "*Default*" | sort -r | head -n 1)
+echo "Zen profile path: $zen_profile"
 
-# Define zen profile path if available
-zen_profile="$(grep Path= ~/.zen/profiles.ini | cut -d= -f2)"
-zen_profile="${HOME}/.zen/${zen_profile}"
-echo "Zen profile path: ${zen_profile}"
+# Export for use in eval
+export zen_profile
 
-# Parse arguments
-enable_backup=true
+# Create backup folder with timestamp
+backup_enabled=true
+backup_dir="${HOME}/backup_$(date +%Y%m%d_%H%M%S)"
+mkdir -p "$backup_dir"
 
-# Read the config file line by line
+echo "Backup enabled? $backup_enabled"
+echo "Backup directory: $backup_dir"
+
+# Read .psv file line by line
 while IFS='|' read -r flag path target deps; do
-  # Skip comments and empty lines
+  # Skip empty lines or comments
   [[ -z "$flag" || "$flag" =~ ^# ]] && continue
 
-  # Expand variables like ${HOME} and ${zen_profile}
-  eval path='$path'
-  target_parts=($target)
-  dep_parts=($deps)
+  # Support variables like ${HOME} and ${zen_profile}
+  eval "path=\"$path\""
+  eval "deps=\"$deps\""
 
-  for target_part in "${target_parts[@]}"; do
-    src="${REPO}/Configs/${dep_parts[0]}/${target_part}"
-    dst="${path}/${target_part}"
+  # Convert strings to arrays
+  IFS=' ' read -r -a targets <<< "$target"
+  IFS=' ' read -r -a dependencies <<< "$deps"
 
-    # Create backup if enabled and file exists
-    if [[ "$enable_backup" == true && -e "$dst" ]]; then
-      backup_path="${BACKUP_DIR}${dst}"
-      mkdir -p "$(dirname "$backup_path")"
-      echo "[Backup] $dst -> $backup_path"
-      cp -a "$dst" "$backup_path"
-    fi
+  for file in "${targets[@]}"; do
+    # Full target path (on the system)
+    dst="$path/$file"
 
-    # Skip if flag is P (preserve) and file already exists
-    if [[ "$flag" == *P* && -e "$dst" ]]; then
-      echo "[P] Skipped (already exists) $dst"
-      continue
-    fi
+    # Source file path (from ./Configs)
+    src="$script_dir/../Configs/$dst"
 
-    # Check if the source exists before trying to copy
+    # Warn if source does not exist
     if [[ ! -e "$src" ]]; then
       echo "[Warning] Source file does not exist: $src"
       continue
     fi
 
-    # Create destination directory
-    mkdir -p "$(dirname "$dst")"
-
-    # Perform the copy based on the flag
-    if [[ "$flag" == *S* || "$flag" == *O* ]]; then
-      cp -a "$src" "$dst"
-      echo "[$flag] Restored $src -> $dst"
-    elif [[ "$flag" == *P* ]]; then
-      cp -an "$src" "$dst"
-      echo "[$flag] Preserved $src -> $dst"
+    # Backup existing file if required
+    if [[ "$flag" =~ [BSO] && -e "$dst" ]]; then
+      echo "[Backup] $dst -> $backup_dir/$dst"
+      mkdir -p "$(dirname "$backup_dir/$dst")"
+      cp -r "$dst" "$backup_dir/$dst"
     fi
+
+    # Perform action based on the flag
+    case "$flag" in
+      P)
+        if [[ ! -e "$dst" ]]; then
+          echo "[P] Copying $src -> $dst"
+          mkdir -p "$(dirname "$dst")"
+          cp -r "$src" "$dst"
+        else
+          echo "[P] Skipped (already exists) $dst"
+        fi
+        ;;
+      S)
+        echo "[S] Syncing $src -> $dst"
+        mkdir -p "$(dirname "$dst")"
+        cp -r "$src" "$dst"
+        ;;
+      O)
+        echo "[O] Overwriting $dst with $src"
+        mkdir -p "$(dirname "$dst")"
+        rm -rf "$dst"
+        cp -r "$src" "$dst"
+        ;;
+      *)
+        echo "[Error] Unknown flag: $flag"
+        ;;
+    esac
   done
-done < "$CONFIG_FILE"
+
+done < "$psv_file"
 
