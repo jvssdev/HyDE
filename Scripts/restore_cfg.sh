@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Path to the .psv file
-PSV_FILE="$(dirname "$0")/../restore_cfg.psv"
+PSV_FILE="$(dirname "$0")/restore_cfg.psv"
 
 # Base path for configs folder relative to this script
 CONFIGS_BASE="$(dirname "$0")/../Configs"
