@@ -50,6 +50,7 @@ backup_target() {
 
 while IFS= read -r line || [[ -n "$line" ]]; do
   # Skip empty lines and comments (#)
+  echo "Processing line: $line"
   [[ -z "$line" ]] && continue
   [[ "$line" =~ ^# ]] && continue
 
