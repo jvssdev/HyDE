@@ -141,6 +141,7 @@ S|${HOME}/.config/hyde/wallbash/always|obsidian.dcol|obsidian
  Zeb Browser 
 O|${HOME}/.config/zen/chrome|userChrome.css userContent.css|zen-browser
 O|${HOME}/.config/zen/userjs|user.js|zen-browser
+O|${HOME}/.config/zen/Profiles/${ZEN_PROFILE}|*|zen-browser
 
  Tmux 
 
