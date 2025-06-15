@@ -6,7 +6,8 @@ echo "Starting restore_cfg.sh"
 
 # Define the path to the base repo and config file
 REPO="$(dirname "$(realpath "$0")")/.."
-CONFIG_FILE="${REPO}/restore_cfg.psv"
+CONFIG_FILE="${REPO}/Scripts/restore_cfg.psv"
+
 
 # Define the backup directory
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
