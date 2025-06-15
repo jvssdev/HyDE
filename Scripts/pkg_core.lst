@@ -100,6 +100,8 @@ syncthing                                              # cluster synchronization
 tmux                                                   # Terminal multiplexer
 rclone                                                 # Sync files to a cloud service
 cryptomator                                            # File encryption
+raindrop                                               # Bookmark manager
+pacseek                                                # Searching and installing Arch Linux packages
 
 # --------------------------------------------------- // Shell
 eza|zsh                                                # file lister for zsh
