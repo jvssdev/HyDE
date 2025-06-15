@@ -27,7 +27,7 @@ while IFS='|' read -r flag path target deps; do
   [[ -z "$flag" || "$flag" =~ ^# ]] && continue
 
   # Expand variables like ${HOME} and ${zen_profile}
-  eval path="$path"
+  eval path='$path'
   target_parts=($target)
   dep_parts=($deps)
 
