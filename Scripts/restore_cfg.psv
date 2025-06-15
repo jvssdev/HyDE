@@ -138,9 +138,11 @@ P|${HOME}/.config/hypr|hypridle.conf|hypridle
 P|${HOME}/Documents/Obsidian Vault/.obsidian/themes|Wallbash|obsidian
 S|${HOME}/.config/hyde/wallbash/always|obsidian.dcol|obsidian
 
+
  Zen Browser 
-S|${HOME}/.zen/${ZEN_PROFILE}/chrome|userChrome.css userContent.css|zen-browser
-S|${HOME}/.zen/${ZEN_PROFILE}/userjs|user.js|zen-browser
+S|~/.zen/${ZEN_PROFILE}/chrome|userChrome.css userContent.css|zen-browser
+S|~/.zen/${ZEN_PROFILE}/userjs|user.js|zen-browser
+
 
  Tmux 
 
