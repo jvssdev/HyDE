@@ -34,10 +34,11 @@ while IFS='|' read -r flags path target deps || [[ -n "$flags" ]]; do
     # Skip comments and empty lines
     [[ "${flags}" =~ ^#.*$ || -z "${flags}" ]] && continue
 
-    # Expand environment variables like ${HOME} and ${zen_profile}
-    path=$(eval echo "${path}")
-    # Replace literal ${zen_profile} with its value
+    # First replace the literal ${zen_profile} manually to avoid issues with eval
     path="${path//\$\{zen_profile\}/${zen_profile}}"
+
+    # Then eval with proper quoting (use double quotes inside eval to preserve spaces)
+    path=$(eval "echo \"$path\"")
 
     # Multiple target files can be space separated, so split them
     IFS=' ' read -ra targets <<<"${target}"
