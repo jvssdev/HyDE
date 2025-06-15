@@ -1,99 +1,95 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-# === Determine script directory and config source directory ===
-scrDir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
-cfgDir="${scrDir}/Configs"
+# Root directory of your repository/configs
+scrDir="${HOME}/HyDE"
 
-# === Dry run mode: if set to 1, no files will be copied ===
-flg_DryRun=0
+# PSV file location
+PSVFILE="${scrDir}/Scripts/restore_cfg.psv"
 
-# === Detect ZenBrowser default profile safely ===
-zen_profile=""
-zen_profiles_ini="${HOME}/.zen/profiles.ini"
+# Define your Zen Browser profile path here (quoted to handle spaces)
+zen_profile="${HOME}/.zen/7zna1f07.Default (release)"
 
-if [ -f "${zen_profiles_ini}" ]; then
-    # Extract the path of the profile marked as Default=1
-    zen_profile_path=$(awk -F '=' '
-        /^\[.*\]/ { section=$0 }
-        $1 ~ /^Path/ { path[section]=$2 }
-        $1 ~ /^Default/ && $2==1 { def=section }
-        END {
-            gsub(/[\[\]]/, "", def);
-            print path["["def"]"]
-        }
-    ' "${zen_profiles_ini}")
+# Backup enabled flag (set to false if you want to disable backup)
+DO_BACKUP=true
+BACKUP_DIR="${HOME}/backup_$(date +%Y%m%d_%H%M%S)"
 
-    if [ -n "${zen_profile_path}" ]; then
-        zen_profile="${HOME}/.zen/${zen_profile_path}"
-        echo "[zenbrowser] Default profile detected: ${zen_profile}"
-    else
-        echo "[zenbrowser] No default profile found in profiles.ini"
+# Function to backup files/directories before overwriting
+backup_file() {
+    local file="$1"
+    if [[ -e "$file" ]]; then
+        # Create backup directory, preserving relative path
+        mkdir -p "${BACKUP_DIR}/$(dirname "${file/#$HOME\/}")"
+        cp -a "$file" "${BACKUP_DIR}/${file/#$HOME\/}"
+        echo "[Backup] $file -> ${BACKUP_DIR}/${file/#$HOME\/}"
     fi
-else
-    echo "[zenbrowser] profiles.ini not found at ~/.zen"
-fi
-
-# === Expand variables like ${zen_profile} and ${HOME} in paths ===
-expand_path() {
-    local input="$1"
-    local expanded="${input//\$\{zen_profile\}/${zen_profile}}"
-    eval echo "${expanded}"
 }
 
-# === Restore dotfiles based on a .psv (pipe-separated value) file ===
-deploy_psv() {
-    local psv="$1"
-    while IFS= read -r line; do
-        # Skip empty lines and comments
-        [[ -z "$line" || "$line" =~ ^# ]] && continue
+echo "Starting restore_cfg.sh"
+echo "Backup enabled? $DO_BACKUP"
+echo "Backup directory: $BACKUP_DIR"
+echo "Zen profile path: $zen_profile"
 
-        # Split line into flag | path | target | dependency
-        IFS='|' read -r flag path target dep <<<"$line"
+while IFS='|' read -r flags path target deps || [[ -n "$flags" ]]; do
+    # Skip comments and empty lines
+    [[ "${flags}" =~ ^#.*$ || -z "${flags}" ]] && continue
 
-        # Expand paths with variables
-        path=$(expand_path "$path")
-        target=$(expand_path "$target")
+    # Expand environment variables like ${HOME} and ${zen_profile}
+    path=$(eval echo "${path}")
+    # Replace literal ${zen_profile} with its value
+    path="${path//\$\{zen_profile\}/${zen_profile}}"
 
-        # Define source and destination
-        src="${cfgDir}/${target}"
-        dst="${path}"
+    # Multiple target files can be space separated, so split them
+    IFS=' ' read -ra targets <<<"${target}"
 
-        # Show operation summary
-        [[ "$flag" =~ B|P|S|O ]] && echo "[*] ${flag} ${src} -> ${dst}"
+    for tgt in "${targets[@]}"; do
+        src="${scrDir}/Configs/${deps}/${tgt}"
+        dst="${path}/${tgt}"
 
-        # Ensure destination directory exists
-        [[ ${flg_DryRun} -ne 1 ]] && mkdir -p "$dst"
+        # Create destination directory if it does not exist
+        mkdir -p "$(dirname "$dst")"
 
-        # === Handle Backup flag (B) ===
-        if [[ "$flag" == *"B"* && -e "${dst}" ]]; then
-            bak="${dst}.bak.$(date +%s)"
-            echo "[bkp] Backing up ${dst} to ${bak}"
-            [[ ${flg_DryRun} -ne 1 ]] && cp -a "${dst}" "${bak}"
+        # Backup destination file/directory if backup is enabled
+        if $DO_BACKUP; then
+            backup_file "$dst"
         fi
 
-        # === Handle main flags ===
-        case "$flag" in
-            # Populate (only if destination doesn't exist)
+        # Perform actions according to the flag
+        case "$flags" in
             P)
-                if [[ ! -e "$dst" && ${flg_DryRun} -ne 1 ]]; then
+                # Preserve: copy only if destination does not exist
+                if [[ ! -e "$dst" ]]; then
                     cp -a "$src" "$dst"
+                    echo "[P] Copied $src to $dst"
+                else
+                    echo "[P] Skipped (already exists) $dst"
                 fi
                 ;;
-            # Sync (copy and overwrite only listed contents)
             S)
-                [[ ${flg_DryRun} -ne 1 ]] && rsync -a --delete "$src/" "$dst/"
+                # Sync: overwrite target files only
+                cp -a "$src" "$dst"
+                echo "[S] Synced $src to $dst"
                 ;;
-            # Overwrite everything
             O)
-                [[ ${flg_DryRun} -ne 1 ]] && cp -a "$src" "$dst"
+                # Overwrite: if directory, remove and copy entire dir; else overwrite file
+                if [[ -d "$src" ]]; then
+                    rm -rf "$dst"
+                    cp -a "$src" "$dst"
+                    echo "[O] Overwritten directory $dst"
+                else
+                    cp -a "$src" "$dst"
+                    echo "[O] Overwritten file $dst"
+                fi
+                ;;
+            B)
+                # Backup only (backup already done)
+                echo "[B] Backup completed for $dst"
+                ;;
+            *)
+                echo "[!] Unknown flag: $flags"
                 ;;
         esac
+    done
+done < "$PSVFILE"
 
-    done < "$psv"
-}
-
-# === Main execution ===
-
-echo "🛠️ Restoring configuration using restore_cfg.psv..."
-deploy_psv "${scrDir}/restore_cfg.psv"
-echo "✅ Done."
+echo "restore_cfg.sh finished."
