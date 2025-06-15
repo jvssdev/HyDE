@@ -3,26 +3,23 @@ set -euo pipefail
 
 # ---------------------------------------------
 # restore_cfg.sh
-# Script to restore dotfiles/configs from a list (.psv file)
-# Supports backup, conditional copy, and paths with absolute or relative targets.
+# Script to restore dotfiles/configs from a pipe-separated .psv file
+# Supports backup, conditional copy, absolute and relative paths,
+# and skips invalid lines and comments.
 # ---------------------------------------------
 
-# Configuration
 SCRIPT_DIR="$(dirname "$(realpath "$0")")"
 BASE_CONFIG_DIR="$(realpath "$SCRIPT_DIR/../Configs")"
 PSV_FILE="$SCRIPT_DIR/restore_cfg.psv"
 
-# Backup configuration
 BACKUP_ENABLED=true
 BACKUP_DIR="${HOME}/backup_$(date +%Y%m%d_%H%M%S)"
 
-# Detect Zen profile from ~/.zen/profiles.ini (optional)
 ZEN_PROFILE=""
 ZEN_PROFILES_INI="${HOME}/.zen/profiles.ini"
 if [[ -f "$ZEN_PROFILES_INI" ]]; then
-  # Extract path of default profile (first profile path)
-  ZEN_PROFILE=$(grep '^Path=' "$ZEN_PROFILES_INI" | head -n1 | cut -d= -f2)
-  ZEN_PROFILE="${HOME}/.zen/${ZEN_PROFILE}"
+  ZEN_PROFILE_PATH=$(grep '^Path=' "$ZEN_PROFILES_INI" | head -n1 | cut -d= -f2)
+  ZEN_PROFILE="${HOME}/.zen/${ZEN_PROFILE_PATH}"
 fi
 
 echo "Starting restore_cfg.sh"
@@ -35,7 +32,14 @@ if [[ -n "$ZEN_PROFILE" ]]; then
   echo "Zen profile path: $ZEN_PROFILE"
 fi
 
-# Function to backup files or directories
+# Trim function (removes leading/trailing whitespace)
+trim() {
+  local var="$*"
+  var="${var#"${var%%[![:space:]]*}"}"   # leading
+  var="${var%"${var##*[![:space:]]}"}"   # trailing
+  echo -n "$var"
+}
+
 backup_target() {
   local target_path="$1"
   if [[ -e "$target_path" ]]; then
@@ -46,31 +50,38 @@ backup_target() {
   fi
 }
 
-# Read the .psv file line by line
-while IFS='|' read -r flag path target dependency || [[ -n "$flag" ]]; do
-  # Skip comments and empty lines
-  [[ "$flag" =~ ^# ]] && continue
-  [[ -z "$flag" ]] && continue
+while IFS= read -r line || [[ -n "$line" ]]; do
+  # Skip empty lines and comments
+  [[ -z "$line" ]] && continue
+  [[ "$line" =~ ^# ]] && continue
 
-  # Trim whitespace
-  flag=$(echo "$flag" | xargs)
-  path=$(echo "$path" | xargs)
-  target=$(echo "$target" | xargs)
-  dependency=$(echo "$dependency" | xargs)
+  # Parse line into 4 fields separated by '|'
+  IFS='|' read -r flag path target dependency <<< "$line"
 
-  # Expand ${HOME} in path and target
+  # If not 4 fields, skip line
+  if [[ -z "$dependency" ]]; then
+    echo "[Skipping] Invalid line (not 4 fields): $line"
+    continue
+  fi
+
+  flag=$(trim "$flag")
+  path=$(trim "$path")
+  target=$(trim "$target")
+  dependency=$(trim "$dependency")
+
+  # Expand variables ${HOME} and ${zen_profile}
   expanded_path=$(eval echo "$path")
   expanded_target=$(eval echo "$target")
 
-  # Special handling for zen profile variable in target or path
+  # Replace ${zen_profile} if set
   if [[ -n "$ZEN_PROFILE" ]]; then
     expanded_path="${expanded_path//\$\{zen_profile\}/$ZEN_PROFILE}"
     expanded_target="${expanded_target//\$\{zen_profile\}/$ZEN_PROFILE}"
   fi
 
-  # Determine source path:
-  # If target is absolute path, use it directly.
-  # Else join with BASE_CONFIG_DIR.
+  # Determine source (src)
+  # If expanded_target is absolute path, src=expanded_target
+  # Else src = BASE_CONFIG_DIR/expanded_target
   if [[ "$expanded_target" == /* ]]; then
     src="$expanded_target"
   else
@@ -79,34 +90,32 @@ while IFS='|' read -r flag path target dependency || [[ -n "$flag" ]]; do
 
   dest="$expanded_path"
 
-  # Check if source exists
   if [[ ! -e "$src" ]]; then
     echo "[Warning] Source file does not exist: $src"
     continue
   fi
 
-  # Backup destination if enabled
+  # Backup destination before copying
   if $BACKUP_ENABLED; then
     backup_target "$dest"
   fi
 
-  # Handle according to flag
   case "$flag" in
-    P)  # Populate: only copy if destination doesn't exist
+    P)
       if [[ -e "$dest" ]]; then
-        echo "[P] Skipped (already exists) $dest"
+        echo "[P] Skipped (exists) $dest"
       else
         mkdir -p "$(dirname "$dest")"
         echo "[P] Copying $src to $dest"
         cp -r "$src" "$dest"
       fi
       ;;
-    S)  # Sync: overwrite destination
+    S)
       mkdir -p "$(dirname "$dest")"
       echo "[S] Copying $src to $dest (overwrite)"
       cp -r "$src" "$dest"
       ;;
-    O)  # Overwrite everything, if directory remove first
+    O)
       if [[ -d "$dest" ]]; then
         echo "[O] Removing directory $dest before overwrite"
         rm -rf "$dest"
@@ -115,8 +124,8 @@ while IFS='|' read -r flag path target dependency || [[ -n "$flag" ]]; do
       echo "[O] Copying $src to $dest (overwrite)"
       cp -r "$src" "$dest"
       ;;
-    B)  # Backup only, nothing else
-      echo "[B] Backup only flag for $dest"
+    B)
+      echo "[B] Backup only for $dest"
       ;;
     *)
       echo "[Warning] Unknown flag: $flag"
@@ -125,5 +134,5 @@ while IFS='|' read -r flag path target dependency || [[ -n "$flag" ]]; do
 
 done < "$PSV_FILE"
 
-echo "Done restoring configs."
+echo "Restore complete."
 
