@@ -6,7 +6,7 @@ echo "Starting restore_cfg.sh"
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Path to the .psv file
-psv_file="${script_dir}/../restore_cfg.psv"
+psv_file="${script_dir}/restore_cfg.psv"
 
 # Detect Zen profile automatically
 zen_profile=$(find ~/.zen -maxdepth 1 -type d -name "*Default*" | sort -r | head -n 1)
