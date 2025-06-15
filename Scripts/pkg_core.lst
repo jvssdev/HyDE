@@ -98,6 +98,8 @@ bitwarden                                              # password manager
 obsidian                                               # markdown app
 syncthing                                              # cluster synchronization 
 tmux                                                   # Terminal multiplexer
+rclone                                                 # Sync files to a cloud service
+cryptomator                                            # File encryption
 
 # --------------------------------------------------- // Shell
 eza|zsh                                                # file lister for zsh
