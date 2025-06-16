@@ -155,6 +155,20 @@ CfgDir="${HOME}/HyDE/Configs" # Ajuste conforme seu diretório de configs
 ZEN_PROFILE=$(get_zen_profile)
 export ZEN_PROFILE
 print_log g "Zen Profile detectado: '${ZEN_PROFILE}'"
+# -------------------------------
+# [AutoSync] Zen Browser files
+# -------------------------------
+
+zen_src_base="${HOME}/.config/zen"
+zen_repo_base="${HYDE_REPO}/Configs/.zen/${ZEN_PROFILE}"
+
+for subdir in chrome userjs; do
+  mkdir -p "${zen_repo_base}/${subdir}"
+  for file in "${zen_src_base}/${subdir}/"*; do
+    [ -f "$file" ] || continue
+    cp -u "$file" "${zen_repo_base}/${subdir}/"
+  done
+done
 
 # Arquivo .psv padrão
 CfgLst="${scrDir}/restore_cfg.psv"
