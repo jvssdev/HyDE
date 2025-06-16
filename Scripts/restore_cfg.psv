@@ -140,9 +140,8 @@ S|${HOME}/.config/hyde/wallbash/always|obsidian.dcol|obsidian
 
 
  Zen Browser 
-S|~/.zen/${ZEN_PROFILE}/chrome|userChrome.css userContent.css|zen-browser
-S|~/.zen/${ZEN_PROFILE}/userjs|user.js|zen-browser
-
+S|${HOME}/.zen/profiles/chrome|userChrome.css userContent.css|zen-browser
+S|${HOME}/.zen/profiles/userjs|user.js|zen-browser
 
  Tmux 
 

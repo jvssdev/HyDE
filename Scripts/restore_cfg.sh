@@ -1,59 +1,59 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2154
+# shellcheck disable=SC1091
+#|---/ /+--------------------------------+---/ /|#
+#|--/ /-| Script to restore hyde configs |--/ /-|#
+#|-/ /--| Prasanth Rangan                |-/ /--|#
+#|/ /---+--------------------------------+/ /---|#
 
-set -euo pipefail
-
-# Diretório onde o script está
-scrDir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
-
-# Detectar arquivo padrão de lista
-defaultLst=""
-[ -f "${scrDir}/restore_cfg.lst" ] && defaultLst="restore_cfg.lst"
-[ -f "${scrDir}/restore_cfg.psv" ] && defaultLst="restore_cfg.psv"
-[ -f "${scrDir}/restore_cfg.json" ] && defaultLst="restore_cfg.json"
-[ -f "${scrDir}/${USER}-restore_cfg.psv" ] && defaultLst="${USER}-restore_cfg.psv"
-
-# Detectar perfil do ZenBrowser
-zen_profile=""
-if [ -f "${HOME}/.zen/profiles.ini" ]; then
-    zen_profile=$(awk -F= '/^\[Profile[0-9]+\]/{section=$0} $1=="Default" && $2==1{found=1} $1=="Path"{if(found){print $2; found=0}}' "${HOME}/.zen/profiles.ini")
-fi
-
-# Função para restaurar a partir de .psv
-deploy_psv() {
-    local psv="$1"
-
-    while IFS= read -r line; do
-        [[ -z "$line" || "$line" == \#* ]] && continue
-        [[ "$line" != S\|* ]] && continue
-
-        IFS='|' read -r _ src files label <<< "$line"
-        src="${src/#\~/$HOME}"  # expandir ~ para $HOME
-
-        # Substituir caminho se for do ZenBrowser
-        if [[ "$src" == *".zen/profiles"* && -n "$zen_profile" ]]; then
-            src="${HOME}/.zen/${zen_profile}/$(basename "$src")"
-        fi
-
-        # Criação do destino final (se necessário)
-        mkdir -p "$src"
-
-        # Copiar arquivos listados
-        for f in $files; do
-            cfg_file="${scrDir}/Configs/${src#${HOME}/}"
-            if [ -f "${cfg_file}/${f}" ]; then
-                cp -v "${cfg_file}/${f}" "${src}/${f}"
-            else
-                echo "⚠️ Arquivo não encontrado: ${cfg_file}/${f}"
-            fi
-        done
-    done < "$psv"
+# Função para extrair o zen_profile do profiles.ini
+get_zen_profile() {
+    local ini="${HOME}/.zen/profiles.ini"
+    if [[ -f "$ini" ]]; then
+        # Extrai a linha Default= e pega o valor (sem espaços)
+        zen_profile=$(awk -F '=' '/^Default=/{print $2}' "$ini" | tr -d '[:space:]')
+    else
+        zen_profile=""
+    fi
 }
 
-# Executar se tiver arquivo
-if [ -n "$defaultLst" ]; then
-    echo "🔁 Restaurando com base em ${defaultLst}"
-    deploy_psv "${scrDir}/${defaultLst}"
-else
-    echo "❌ Nenhuma lista de restauração encontrada."
-    exit 1
-fi
+# Função para deploy a partir do .psv
+deploy_psv() {
+    local psv_file="$1"
+    local line pth files tag
+
+    while IFS='|' read -r line; do
+        # Ignora linhas em branco ou comentários
+        [[ -z "$line" || "$line" =~ ^# ]] && continue
+
+        # Quebra a linha no formato: Tipo|Caminho|Arquivos|Tag
+        IFS='|' read -r type pth files tag <<< "$line"
+
+        # Substitui variável $HOME no path (expansão)
+        pth="${pth//\$\{HOME\}/$HOME}"
+
+        # Substitui o path genérico do zen_profile se aplicável
+        if [[ "$pth" == *".zen/profiles"* ]]; then
+            if [[ -n "$zen_profile" ]]; then
+                echo "[DEBUG] Substituindo caminho genérico '$pth' pelo perfil real '${HOME}/.zen/${zen_profile}'"
+                pth="${HOME}/.zen/${zen_profile}"
+            else
+                echo "[WARN] zen_profile vazio, não substituindo caminho para $pth"
+            fi
+        fi
+
+        echo "[INFO] Deploy $type -> $pth com arquivos: $files (tag: $tag)"
+
+        # Aqui entra sua lógica para copiar arquivos/diretorios
+        # Exemplo (adaptar para seu código real):
+        # cp -v "$scrDir/$(basename $pth)/"$files "$pth"/
+        # (ou outra lógica para sincronizar conforme o tipo S, D etc)
+    done < "$psv_file"
+}
+
+# MAIN
+
+get_zen_profile
+echo "Zen Profile detectado: '$zen_profile'"
+
+deploy_psv "${scrDir}/restore_cfg.psv"
