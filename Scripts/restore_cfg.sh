@@ -8,18 +8,32 @@
 
 get_zen_profile() {
   local ini_file="${HOME}/.zen/profiles.ini"
-  if [[ -f "$ini_file" ]]; then
+  local profile_path=""
+
+  if [[ ! -f "$ini_file" ]]; then
+    return
+  fi
+
+  profile_path=$(awk '
+    /^\[Install.*\]/ {install=1; next}
+    /^\[.*\]/ {install=0}
+    install && /^Default=/ {
+      print substr($0, 9)
+      exit
+    }' "$ini_file")
+
+  if [[ -z "$profile_path" ]]; then
     local profile_section
     profile_section=$(awk '/\[Profile[0-9]+\]/ {section=$0} /Default=1/ {print section}' "$ini_file" | head -n1 | tr -d '[]')
     if [[ -n "$profile_section" ]]; then
-      local profile_path
       profile_path=$(awk -v section="$profile_section" '
-        $0 == "[" section "]" {flag=1; next} 
-        /^\[.*\]/ {flag=0} 
+        $0 == "[" section "]" {flag=1; next}
+        /^\[.*\]/ {flag=0}
         flag && /^Path=/ {print substr($0,6)}' "$ini_file")
-      echo "$profile_path"
     fi
   fi
+
+  echo "$profile_path"
 }
 
 pkg_installed() {
