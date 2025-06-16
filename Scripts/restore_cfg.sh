@@ -1,59 +1,172 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2154
-# shellcheck disable=SC1091
+# shellcheck disable=SC2154,SC1091,SC2034
+
 #|---/ /+--------------------------------+---/ /|#
 #|--/ /-| Script to restore hyde configs |--/ /-|#
 #|-/ /--| Prasanth Rangan                |-/ /--|#
 #|/ /---+--------------------------------+/ /---|#
 
-# Função para extrair o zen_profile do profiles.ini
+# Função para extrair o perfil ativo do Zen Browser no profiles.ini
 get_zen_profile() {
-    local ini="${HOME}/.zen/profiles.ini"
-    if [[ -f "$ini" ]]; then
-        # Extrai a linha Default= e pega o valor (sem espaços)
-        zen_profile=$(awk -F '=' '/^Default=/{print $2}' "$ini" | tr -d '[:space:]')
-    else
-        zen_profile=""
+  local ini_file="${HOME}/.zen/profiles.ini"
+  if [[ -f "$ini_file" ]]; then
+    local profile_section
+    profile_section=$(awk '/\[Profile[0-9]+\]/ {section=$0} /Default=1/ {print section}' "$ini_file" | head -n1 | tr -d '[]')
+    if [[ -n "$profile_section" ]]; then
+      local profile_path
+      profile_path=$(awk -v section="$profile_section" '
+        $0 == "[" section "]" {flag=1; next} 
+        /^\[.*\]/ {flag=0} 
+        flag && /^Path=/ {print substr($0,6)}' "$ini_file")
+      echo "$profile_path"
     fi
+  fi
 }
 
-# Função para deploy a partir do .psv
+# Função para checar se o pacote está instalado (exemplo genérico)
+pkg_installed() {
+  # Aqui você deve adaptar para seu gerenciador de pacotes (ex: pacman, apt, brew)
+  # Retorna 0 se instalado, 1 se não instalado
+  command -v "$1" >/dev/null 2>&1
+}
+
+# Função simples para printar logs coloridos
+print_log() {
+  local clr_green="\033[0;32m"
+  local clr_yellow="\033[0;33m"
+  local clr_red="\033[0;31m"
+  local clr_blue="\033[0;34m"
+  local clr_reset="\033[0m"
+  local type=$1
+  shift
+  case "$type" in
+    g) echo -e "${clr_green}$*${clr_reset}" ;;
+    y) echo -e "${clr_yellow}$*${clr_reset}" ;;
+    r) echo -e "${clr_red}$*${clr_reset}" ;;
+    b) echo -e "${clr_blue}$*${clr_reset}" ;;
+    *) echo "$*" ;;
+  esac
+}
+
+# Função para deploy usando arquivos PSV (pipe-separated values)
 deploy_psv() {
-    local psv_file="$1"
-    local line pth files tag
+  local psv_file="$1"
+  local zen_profile="$2"
 
-    while IFS='|' read -r line; do
-        # Ignora linhas em branco ou comentários
-        [[ -z "$line" || "$line" =~ ^# ]] && continue
+  if [[ ! -f "$psv_file" ]]; then
+    print_log r "[ERROR] Arquivo PSV não encontrado: $psv_file"
+    exit 1
+  fi
 
-        # Quebra a linha no formato: Tipo|Caminho|Arquivos|Tag
-        IFS='|' read -r type pth files tag <<< "$line"
+  while IFS= read -r line || [[ -n "$line" ]]; do
 
-        # Substitui variável $HOME no path (expansão)
-        pth="${pth//\$\{HOME\}/$HOME}"
+    # Ignorar linhas inválidas ou comentários
+    if [[ "$line" =~ ^[[:space:]]*# ]] || [[ "$(awk -F'|' '{print NF}' <<< "$line")" -lt 4 ]]; then
+      continue
+    fi
 
-        # Substitui o path genérico do zen_profile se aplicável
-        if [[ "$pth" == *".zen/profiles"* ]]; then
-            if [[ -n "$zen_profile" ]]; then
-                echo "[DEBUG] Substituindo caminho genérico '$pth' pelo perfil real '${HOME}/.zen/${zen_profile}'"
-                pth="${HOME}/.zen/${zen_profile}"
-            else
-                echo "[WARN] zen_profile vazio, não substituindo caminho para $pth"
-            fi
+    ctlFlag=$(awk -F'|' '{print $1}' <<< "$line")
+    pth=$(awk -F'|' '{print $2}' <<< "$line")
+    pth=$(eval echo "$pth")  # expande variáveis
+
+    cfg=$(awk -F'|' '{print $3}' <<< "$line")
+    pkg=$(awk -F'|' '{print $4}' <<< "$line")
+
+    # Ajusta path para Zen Browser baseado no perfil detectado
+    if [[ "$pth" == *".zen/Profiles"* ]]; then
+      if [[ -n "$zen_profile" ]]; then
+        pth="${HOME}/.zen/${zen_profile}"
+      fi
+    fi
+
+    # Ignora se ctlFlag for I
+    if [[ "$ctlFlag" == "I" ]]; then
+      print_log r "[ignore] // $pth/$cfg"
+      continue
+    fi
+
+    # Verifica se dependências estão instaladas
+    for dep in $pkg; do
+      if ! pkg_installed "$dep"; then
+        print_log y "[skip] missing dependency '$dep' --> $pth/$cfg"
+        continue 2
+      fi
+    done
+
+    tgt="${pth//${HOME}/}"
+
+    # Cria diretório destino se não existir
+    [[ ! -d "$pth" ]] && mkdir -p "$pth"
+
+    # Trata cada arquivo ou padrão no cfg
+    for cfg_file in $cfg; do
+      src="${CfgDir}${tgt}/${cfg_file}"
+      dst="${pth}/${cfg_file}"
+
+      # Verifica existência do source
+      if [[ ! -e "$src" ]] && [[ "$ctlFlag" != "B" ]]; then
+        print_log y "[skip] no source $src"
+        continue
+      fi
+
+      # Cria backup se o arquivo existir
+      if [[ -e "$dst" ]]; then
+        [[ ! -d "${BkpDir}${tgt}" ]] && mkdir -p "${BkpDir}${tgt}"
+        case "$ctlFlag" in
+          B)
+            cp -r "$dst" "${BkpDir}${tgt}"
+            print_log g "[copy backup] $dst --> ${BkpDir}${tgt}"
+            ;;
+          O)
+            mv "$dst" "${BkpDir}${tgt}"
+            cp -r "$src" "$pth"
+            print_log r "[move backup + overwrite] $pth <-- $src"
+            ;;
+          S)
+            cp -r "$dst" "${BkpDir}${tgt}"
+            cp -rf "$src" "$pth"
+            print_log g "[copy backup + sync] $pth <-- $src"
+            ;;
+          P)
+            cp -r "$dst" "${BkpDir}${tgt}"
+            cp -rn "$src" "$pth" 2>/dev/null && print_log g "[copy backup + populate] $pth <-- $src" || print_log y "[preserved] $dst"
+            ;;
+          *)
+            print_log y "[preserved] $dst"
+            ;;
+        esac
+      else
+        # Caso não exista, só copia
+        if [[ "$ctlFlag" != "B" ]]; then
+          cp -r "$src" "$pth"
+          print_log g "[populate] $pth <-- $src"
         fi
+      fi
+    done
 
-        echo "[INFO] Deploy $type -> $pth com arquivos: $files (tag: $tag)"
-
-        # Aqui entra sua lógica para copiar arquivos/diretorios
-        # Exemplo (adaptar para seu código real):
-        # cp -v "$scrDir/$(basename $pth)/"$files "$pth"/
-        # (ou outra lógica para sincronizar conforme o tipo S, D etc)
-    done < "$psv_file"
+  done < "$psv_file"
 }
 
-# MAIN
+# Inicio do script
+scrDir=$(dirname "$(realpath "$0")")
+CfgDir="${HOME}/HyDE/Configs/.config"  # Ajuste conforme seu diretório de configs
 
-get_zen_profile
-echo "Zen Profile detectado: '$zen_profile'"
+# Detecta Zen Profile
+ZEN_PROFILE=$(get_zen_profile)
+export ZEN_PROFILE
+print_log g "Zen Profile detectado: '${ZEN_PROFILE}'"
 
-deploy_psv "${scrDir}/restore_cfg.psv"
+# Arquivo .psv padrão
+CfgLst="${scrDir}/restore_cfg.psv"
+if [[ ! -f "$CfgLst" ]]; then
+  print_log r "Arquivo $CfgLst não encontrado!"
+  exit 1
+fi
+
+# Diretório para backups
+BkpDir="${HOME}/.config/cfg_backups/$(date +'%y%m%d_%H%M%S')"
+mkdir -p "$BkpDir"
+
+# Chama deploy_psv
+deploy_psv "$CfgLst" "$ZEN_PROFILE"
+
