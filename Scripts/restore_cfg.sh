@@ -149,7 +149,7 @@ deploy_psv() {
 
 # Inicio do script
 scrDir=$(dirname "$(realpath "$0")")
-CfgDir="${HOME}/HyDE/Configs/.config"  # Ajuste conforme seu diretório de configs
+CfgDir="${HOME}/HyDE/Configs" # Ajuste conforme seu diretório de configs
 
 # Detecta Zen Profile
 ZEN_PROFILE=$(get_zen_profile)
