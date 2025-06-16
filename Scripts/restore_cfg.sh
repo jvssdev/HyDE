@@ -160,7 +160,7 @@ print_log g "Zen Profile detectado: '${ZEN_PROFILE}'"
 # -------------------------------
 
 zen_src_base="${HOME}/.config/zen"
-zen_repo_base="${HYDE_REPO}/Configs/.zen/${ZEN_PROFILE}"
+zen_repo_base="${CfgDir}/.zen/${ZEN_PROFILE}"  # <- corrigido aqui
 
 for subdir in chrome userjs; do
   mkdir -p "${zen_repo_base}/${subdir}"
