@@ -6,7 +6,6 @@
 #|-/ /--| Prasanth Rangan                |-/ /--|#
 #|/ /---+--------------------------------+/ /---|#
 
-# Função para extrair o perfil ativo do Zen Browser no profiles.ini
 get_zen_profile() {
   local ini_file="${HOME}/.zen/profiles.ini"
   if [[ -f "$ini_file" ]]; then
@@ -23,14 +22,10 @@ get_zen_profile() {
   fi
 }
 
-# Função para checar se o pacote está instalado (exemplo genérico)
 pkg_installed() {
-  # Aqui você deve adaptar para seu gerenciador de pacotes (ex: pacman, apt, brew)
-  # Retorna 0 se instalado, 1 se não instalado
   command -v "$1" >/dev/null 2>&1
 }
 
-# Função simples para printar logs coloridos
 print_log() {
   local clr_green="\033[0;32m"
   local clr_yellow="\033[0;33m"
@@ -48,7 +43,6 @@ print_log() {
   esac
 }
 
-# Função para deploy usando arquivos PSV (pipe-separated values)
 deploy_psv() {
   local psv_file="$1"
   local zen_profile="$2"
@@ -60,7 +54,6 @@ deploy_psv() {
 
   while IFS= read -r line || [[ -n "$line" ]]; do
 
-    # Ignorar linhas inválidas ou comentários
     if [[ "$line" =~ ^[[:space:]]*# ]] || [[ "$(awk -F'|' '{print NF}' <<< "$line")" -lt 4 ]]; then
       continue
     fi
@@ -72,20 +65,17 @@ deploy_psv() {
     cfg=$(awk -F'|' '{print $3}' <<< "$line")
     pkg=$(awk -F'|' '{print $4}' <<< "$line")
 
-    # Ajusta path para Zen Browser baseado no perfil detectado
     if [[ "$pth" == *".zen/Profiles"* ]]; then
       if [[ -n "$zen_profile" ]]; then
         pth="${HOME}/.zen/${zen_profile}"
       fi
     fi
 
-    # Ignora se ctlFlag for I
     if [[ "$ctlFlag" == "I" ]]; then
       print_log r "[ignore] // $pth/$cfg"
       continue
     fi
 
-    # Verifica se dependências estão instaladas
     for dep in $pkg; do
       if ! pkg_installed "$dep"; then
         print_log y "[skip] missing dependency '$dep' --> $pth/$cfg"
@@ -95,21 +85,17 @@ deploy_psv() {
 
     tgt="${pth//${HOME}/}"
 
-    # Cria diretório destino se não existir
     [[ ! -d "$pth" ]] && mkdir -p "$pth"
 
-    # Trata cada arquivo ou padrão no cfg
     for cfg_file in $cfg; do
       src="${CfgDir}${tgt}/${cfg_file}"
       dst="${pth}/${cfg_file}"
 
-      # Verifica existência do source
       if [[ ! -e "$src" ]] && [[ "$ctlFlag" != "B" ]]; then
         print_log y "[skip] no source $src"
         continue
       fi
 
-      # Cria backup se o arquivo existir
       if [[ -e "$dst" ]]; then
         [[ ! -d "${BkpDir}${tgt}" ]] && mkdir -p "${BkpDir}${tgt}"
         case "$ctlFlag" in
@@ -147,20 +133,18 @@ deploy_psv() {
   done < "$psv_file"
 }
 
-# Inicio do script
 scrDir=$(dirname "$(realpath "$0")")
-CfgDir="${HOME}/HyDE/Configs" # Ajuste conforme seu diretório de configs
+CfgDir="${HOME}/HyDE/Configs" 
 
-# Detecta Zen Profile
 ZEN_PROFILE=$(get_zen_profile)
 export ZEN_PROFILE
-print_log g "Zen Profile detectado: '${ZEN_PROFILE}'"
+
 # -------------------------------
 # [AutoSync] Zen Browser files
 # -------------------------------
 
 zen_src_base="${HOME}/.config/zen"
-zen_repo_base="${CfgDir}/.zen/${ZEN_PROFILE}"  # <- corrigido aqui
+zen_repo_base="${CfgDir}/.zen/${ZEN_PROFILE}" 
 
 for subdir in chrome userjs; do
   mkdir -p "${zen_repo_base}/${subdir}"
@@ -170,17 +154,15 @@ for subdir in chrome userjs; do
   done
 done
 
-# Arquivo .psv padrão
 CfgLst="${scrDir}/restore_cfg.psv"
 if [[ ! -f "$CfgLst" ]]; then
   print_log r "Arquivo $CfgLst não encontrado!"
   exit 1
 fi
 
-# Diretório para backups
+# Backups directory
 BkpDir="${HOME}/.config/cfg_backups/$(date +'%y%m%d_%H%M%S')"
 mkdir -p "$BkpDir"
 
-# Chama deploy_psv
 deploy_psv "$CfgLst" "$ZEN_PROFILE"
 
