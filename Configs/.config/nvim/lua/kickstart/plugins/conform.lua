@@ -31,6 +31,17 @@ return {
         json = { "prettierd", "prettier" },
         astro = { "prettierd", "prettier" },
         markdown = { "prettierd", "prettier" },
+        html = { "prettierd", "prettier" },
+        css = { "prettierd", "prettier" },
+        scss = { "prettierd", "prettier" },
+        less = { "prettierd", "prettier" },
+        vue = { "prettierd", "prettier" },
+        svelte = { "prettierd", "prettier" },
+        xml = { "htmlbeautifier" },
+        yaml = { "prettierd", "prettier" },
+        toml = { "prettierd", "prettier" },
+        jsx = { "prettierd", "prettier" },
+        tsx = { "prettierd", "prettier" },
       },
       formatters = {
         stylua = {
