@@ -141,6 +141,9 @@ S|${HOME}/.config/hyde/wallbash/always|obsidian.dcol|obsidian
  Zen Browser 
 S|${HOME}/.zen/${ZEN_PROFILE}/userjs|user.js|zen-browser
 
+ Swaync 
+S|${HOME}/.config/swaync|config.json|swaync
+
  Tmux 
 
 S|${HOME}/.config/tmux|tmux.conf|tmux
