@@ -1,30 +1,47 @@
 #!/bin/bash
 
-# Define os caminhos dos arquivos
+# Define paths
 GTK_CSS="$HOME/.cache/hyde/wallbash/gtk.css"
 SWAYNC_DCOL="$HOME/.config/hyde/wallbash/always/swaync.dcol"
 OUTPUT_CSS="$HOME/.config/swaync/style.css"
 
-# Função para extrair cores do gtk.css
+# Check if required files exist
+if [[ ! -f "$GTK_CSS" ]]; then
+  echo "Error: $GTK_CSS not found"
+  exit 1
+fi
+if [[ ! -f "$SWAYNC_DCOL" ]]; then
+  echo "Error: $SWAYNC_DCOL not found"
+  exit 1
+fi
+
+# Function to resolve Wallbash colors from gtk.css
 resolve_color() {
   local color_key="$1"
-  # Se a cor for um valor hexadecimal direto, retorna-o
+  # If the color is a direct hexadecimal, return it
   if [[ "$color_key" =~ ^#[0-9a-fA-F]{6,8}$ ]]; then
     echo "$color_key"
     return
   fi
-  # Extrai o nome da variável Wallbash (ex.: wallbash_pry1 -> pry1)
-  local var_name=$(echo "$color_key" | sed 's/#<wallbash_\(.*\)>/\1/')
-  # Busca o valor no gtk.css
-  local color_value=$(grep "@define-color wallbash_$var_name " "$GTK_CSS" | awk '{print $3}' | sed 's/;//')
-  # Adiciona transparência, se presente (ex.: #<wallbash_1xa8>33 -> #AADAF033)
+  # Extract Wallbash variable name (e.g., wallbash_pry1 -> pry1)
+  local var_name
+  var_name=$(echo "$color_key" | sed 's/#<wallbash_\(.*\)>/\1/')
+  # Look up the value in gtk.css
+  local color_value
+  color_value=$(grep "@define-color wallbash_$var_name " "$GTK_CSS" | awk '{print $3}' | sed 's/;//')
+  # Handle transparency (e.g., #<wallbash_1xa8>33 -> #AADAF033)
   if [[ "$color_key" =~ ([0-9a-fA-F]{2})$ ]]; then
     color_value="${color_value}${BASH_REMATCH[1]}"
+  fi
+  # Validate color value
+  if [[ -z "$color_value" || ! "$color_value" =~ ^#[0-9a-fA-F]{6,8}$ ]]; then
+    echo "Error: Could not resolve color for $color_key in $GTK_CSS" >&2
+    exit 1
   fi
   echo "$color_value"
 }
 
-# Extrai cores do swaync.dcol
+# Extract colors from swaync.dcol
 NOTIFICATIONS_BG=$(grep '^background =' "$SWAYNC_DCOL" | awk '{print $3}')
 NOTIFICATIONS_FG=$(grep '^foreground =' "$SWAYNC_DCOL" | awk '{print $3}')
 NOTIFICATIONS_BORDER=$(grep '^border =' "$SWAYNC_DCOL" | awk '{print $3}')
@@ -35,7 +52,17 @@ ERROR_FG=$(grep '^critical-foreground =' "$SWAYNC_DCOL" | awk '{print $3}')
 SECONDARY_TEXT=$(grep '^secondary-text =' "$SWAYNC_DCOL" | awk '{print $3}')
 MPRIS_GRADIENT=$(grep '^mpris-gradient =' "$SWAYNC_DCOL" | awk '{print $3}')
 
-# Resolve as cores
+# Validate all required colors are present
+for color in "$NOTIFICATIONS_BG" "$NOTIFICATIONS_FG" "$NOTIFICATIONS_BORDER" \
+             "$BUTTON_BG" "$BUTTON_FG" "$BUTTON_HOVER_BG" "$ERROR_FG" \
+             "$SECONDARY_TEXT" "$MPRIS_GRADIENT"; do
+  if [[ -z "$color" ]]; then
+    echo "Error: Missing color definition in $SWAYNC_DCOL" >&2
+    exit 1
+  fi
+done
+
+# Resolve colors
 NOTIFICATIONS_BG=$(resolve_color "$NOTIFICATIONS_BG")
 NOTIFICATIONS_FG=$(resolve_color "$NOTIFICATIONS_FG")
 NOTIFICATIONS_BORDER=$(resolve_color "$NOTIFICATIONS_BORDER")
@@ -46,7 +73,7 @@ ERROR_FG=$(resolve_color "$ERROR_FG")
 SECONDARY_TEXT=$(resolve_color "$SECONDARY_TEXT")
 MPRIS_GRADIENT=$(resolve_color "$MPRIS_GRADIENT")
 
-# Gera o arquivo CSS
+# Generate CSS file
 cat > "$OUTPUT_CSS" << EOF
 @define-color cc-bg $NOTIFICATIONS_BG;
 @define-color noti-border-color $NOTIFICATIONS_BORDER;
@@ -300,5 +327,9 @@ cat > "$OUTPUT_CSS" << EOF
 }
 EOF
 
-# Recarrega o swaync para aplicar as mudanças
-swaync-client -R
+# Reload swaync to apply changes
+if command -v swaync-client >/dev/null 2>&1; then
+  swaync-client -R
+else
+  echo "Warning: swaync-client not found, CSS generated but not applied"
+fi
