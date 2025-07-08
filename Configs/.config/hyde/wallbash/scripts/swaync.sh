@@ -2,7 +2,7 @@
 
 # Define os caminhos dos arquivos
 GTK_CSS="$HOME/.cache/hyde/wallbash/gtk.css"
-CODE_JSON="$HOME/.cache/hyde/wallbash/code.json"
+SWAYNC_DCOL="$HOME/.config/hyde/wallbash/always/swaync.dcol"
 OUTPUT_CSS="$HOME/.config/swaync/style.css"
 
 # Função para extrair cores do gtk.css
@@ -24,17 +24,16 @@ resolve_color() {
   echo "$color_value"
 }
 
-# Extrai cores específicas do code.json
-NOTIFICATIONS_BG=$(jq -r '.colors["notifications.background"]' "$CODE_JSON")
-NOTIFICATIONS_FG=$(jq -r '.colors["notifications.foreground"]' "$CODE_JSON")
-NOTIFICATIONS_BORDER=$(jq -r '.colors["notifications.border"]' "$CODE_JSON")
-BUTTON_BG=$(jq -r '.colors["button.background"]' "$CODE_JSON")
-BUTTON_FG=$(jq -r '.colors["button.foreground"]' "$CODE_JSON")
-BUTTON_HOVER_BG=$(jq -r '.colors["button.hoverBackground"]' "$CODE_JSON")
-TEXT_FG=$(jq -r '.colors["foreground"]' "$CODE_JSON")
-ERROR_FG=$(jq -r '.colors["notificationsErrorIcon.foreground"]' "$CODE_JSON")
-SECONDARY_TEXT=$(jq -r '.colors["textSeparator.foreground"]' "$CODE_JSON")
-MPRIS_GRADIENT=$(resolve_color "#<wallbash_1xa9>") # Usando wallbash_1xa9 para o gradiente do mpris
+# Extrai cores do swaync.dcol
+NOTIFICATIONS_BG=$(grep '^background =' "$SWAYNC_DCOL" | awk '{print $3}')
+NOTIFICATIONS_FG=$(grep '^foreground =' "$SWAYNC_DCOL" | awk '{print $3}')
+NOTIFICATIONS_BORDER=$(grep '^border =' "$SWAYNC_DCOL" | awk '{print $3}')
+BUTTON_BG=$(grep '^button-background =' "$SWAYNC_DCOL" | awk '{print $3}')
+BUTTON_FG=$(grep '^button-foreground =' "$SWAYNC_DCOL" | awk '{print $3}')
+BUTTON_HOVER_BG=$(grep '^button-hover-background =' "$SWAYNC_DCOL" | awk '{print $3}')
+ERROR_FG=$(grep '^critical-foreground =' "$SWAYNC_DCOL" | awk '{print $3}')
+SECONDARY_TEXT=$(grep '^secondary-text =' "$SWAYNC_DCOL" | awk '{print $3}')
+MPRIS_GRADIENT=$(grep '^mpris-gradient =' "$SWAYNC_DCOL" | awk '{print $3}')
 
 # Resolve as cores
 NOTIFICATIONS_BG=$(resolve_color "$NOTIFICATIONS_BG")
@@ -43,9 +42,9 @@ NOTIFICATIONS_BORDER=$(resolve_color "$NOTIFICATIONS_BORDER")
 BUTTON_BG=$(resolve_color "$BUTTON_BG")
 BUTTON_FG=$(resolve_color "$BUTTON_FG")
 BUTTON_HOVER_BG=$(resolve_color "$BUTTON_HOVER_BG")
-TEXT_FG=$(resolve_color "$TEXT_FG")
 ERROR_FG=$(resolve_color "$ERROR_FG")
 SECONDARY_TEXT=$(resolve_color "$SECONDARY_TEXT")
+MPRIS_GRADIENT=$(resolve_color "$MPRIS_GRADIENT")
 
 # Gera o arquivo CSS
 cat > "$OUTPUT_CSS" << EOF
@@ -57,7 +56,7 @@ cat > "$OUTPUT_CSS" << EOF
 @define-color noti-bg-focus rgba(27, 27, 27, 0.6);
 @define-color noti-close-bg rgba(255, 255, 255, 0.1);
 @define-color noti-close-bg-hover rgba(255, 255, 255, 0.15);
-@define-color text-color $TEXT_FG;
+@define-color text-color $NOTIFICATIONS_FG;
 
 * {
   all: unset;
@@ -72,7 +71,7 @@ cat > "$OUTPUT_CSS" << EOF
   border-radius: 10px;
   margin: 18px;
   background-color: $NOTIFICATIONS_BG;
-  color: $TEXT_FG;
+  color: $NOTIFICATIONS_FG;
   border: 2px solid $NOTIFICATIONS_BORDER;
   padding: 14px;
   max-height: 80vh; /* Limita a altura máxima a 80% da tela */
@@ -88,7 +87,7 @@ cat > "$OUTPUT_CSS" << EOF
 /* Estilo para notificações individuais */
 .control-center .notification-row .notification-background {
   border-radius: 7px;
-  color: $TEXT_FG;
+  color: $NOTIFICATIONS_FG;
   background-color: $NOTIFICATIONS_BG;
   box-shadow: inset 0 0 0 1px $NOTIFICATIONS_BORDER;
   margin-top: 10px;
@@ -108,7 +107,7 @@ cat > "$OUTPUT_CSS" << EOF
 }
 
 .control-center .notification-row .notification-background .notification .notification-content .summary {
-  color: $TEXT_FG;
+  color: $NOTIFICATIONS_FG;
 }
 
 .control-center .notification-row .notification-background .notification .notification-content .time {
@@ -116,7 +115,7 @@ cat > "$OUTPUT_CSS" << EOF
 }
 
 .control-center .notification-row .notification-background .notification .notification-content .body {
-  color: $TEXT_FG;
+  color: $NOTIFICATIONS_FG;
 }
 
 .control-center .notification-row .notification-background .notification > *:last-child > * {
@@ -164,13 +163,13 @@ cat > "$OUTPUT_CSS" << EOF
 .control-center .notification-row .notification-background:hover {
   box-shadow: inset 0 0 0 1px $NOTIFICATIONS_BORDER;
   background-color: $BUTTON_HOVER_BG;
-  color: $TEXT_FG;
+  color: $NOTIFICATIONS_FG;
 }
 
 .control-center .notification-row .notification-background:active {
   box-shadow: inset 0 0 0 1px $NOTIFICATIONS_BORDER;
   background-color: $BUTTON_HOVER_BG;
-  color: $TEXT_FG;
+  color: $NOTIFICATIONS_FG;
 }
 
 /* Estilo para o widget mpris */
@@ -188,7 +187,7 @@ cat > "$OUTPUT_CSS" << EOF
 .widget-mpris-title {
   font-weight: 700;
   font-size: 1.25rem;
-  color: $TEXT_FG;
+  color: $NOTIFICATIONS_FG;
 }
 
 .widget-mpris-subtitle {
@@ -198,7 +197,7 @@ cat > "$OUTPUT_CSS" << EOF
 
 /* Estilo para botões do centro de notificações */
 .control-center .widget-title {
-  color: $TEXT_FG;
+  color: $NOTIFICATIONS_FG;
   font-size: 1.3em;
 }
 
@@ -228,7 +227,7 @@ cat > "$OUTPUT_CSS" << EOF
   border-radius: 10px;
   margin: 18px;
   background-color: $NOTIFICATIONS_BG;
-  color: $TEXT_FG;
+  color: $NOTIFICATIONS_FG;
   border: 2px solid $NOTIFICATIONS_BORDER;
   padding: 0;
 }
@@ -247,7 +246,7 @@ cat > "$OUTPUT_CSS" << EOF
 }
 
 .floating-notifications.background .notification-row .notification-background .notification .notification-content .summary {
-  color: $TEXT_FG;
+  color: $NOTIFICATIONS_FG;
 }
 
 .floating-notifications.background .notification-row .notification-background .notification .notification-content .time {
@@ -255,7 +254,7 @@ cat > "$OUTPUT_CSS" << EOF
 }
 
 .floating-notifications.background .notification-row .notification-background .notification .notification-content .body {
-  color: $TEXT_FG;
+  color: $NOTIFICATIONS_FG;
 }
 
 .floating-notifications.background .notification-row .notification-background .notification > *:last-child > * {
