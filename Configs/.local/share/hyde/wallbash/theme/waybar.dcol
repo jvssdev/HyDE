@@ -6,3 +6,18 @@ $HOME/.config/waybar/theme.css|${scrDir}/wbarconfgen.sh
 @define-color wb-act-fg <wallbash_4xa9_rgba(1)>;
 @define-color wb-hvr-bg <wallbash_2xa3_rgba(0.4)>;
 @define-color wb-hvr-fg <wallbash_3xa8_rgba(0.8)>;
+@define-color cc-bg <wallbash_pry1>;
+@define-color noti-border-color <wallbash_1xa8>;
+@define-color noti-bg <wallbash_pry1>;
+@define-color noti-bg-darker <wallbash_pry1>;
+@define-color noti-bg-hover <wallbash_1xa7>;
+@define-color noti-bg-focus rgba(27, 27, 27, 0.6);
+@define-color noti-close-bg rgba(255, 255, 255, 0.1);
+@define-color noti-close-bg-hover rgba(255, 255, 255, 0.15);
+@define-color text-color <wallbash_txt1>;
+@define-color button-background <wallbash_1xa8>;
+@define-color button-foreground <wallbash_pry1>;
+@define-color button-hover-background <wallbash_1xa7>;
+@define-color critical-foreground <wallbash_4xa7>;
+@define-color secondary-text <wallbash_1xa8>;
+@define-color mpris-gradient <wallbash_1xa9>;

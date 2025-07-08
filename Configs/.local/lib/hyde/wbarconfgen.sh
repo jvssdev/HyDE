@@ -10,6 +10,8 @@ waybar_dir="${confDir}/waybar"
 modules_dir="$waybar_dir/modules"
 conf_file="$waybar_dir/config.jsonc"
 conf_ctl="$waybar_dir/config.ctl"
+swaync_dir="${confDir}/swaync"
+swaync_css="$swaync_dir/style.css"
 export scrDir
 
 readarray -t read_ctl <"${conf_ctl}"
@@ -25,7 +27,6 @@ if [ "${num_files}" -gt 1 ]; then
             nextIndex=$(((i + 1) % "${num_files}"))
             switch=1
             break
-
         elif [ "${flag}" -eq 1 ] && [ "$1" == "p" ]; then
             nextIndex=$((i - 1))
             switch=1
@@ -54,7 +55,6 @@ if [ ${#WAYBAR_OUTPUT[@]} -gt 0 ]; then
     w_output=$(printf '"%s", ' "${WAYBAR_OUTPUT[@]}")
     w_output=${w_output%, } # Remove the trailing comma and space
     print_log -sec "waybar" -stat "monitor output" "$w_output"
-
 fi
 export w_output="${w_output:-\"*\"}"
 
@@ -77,7 +77,6 @@ esac
 
 w_height=$(grep '^1|' "${conf_ctl}" | cut -d '|' -f 2)
 if [ -z "${w_height}" ]; then
-    # y_monres=$(cat /sys/class/drm/*/modes | head -1 | cut -d 'x' -f 2)
     y_monres=$(hyprctl -j monitors | jq '.[] | select(.focused == true) | (.height / .scale)')
     w_height=$((y_monres * 2 / 100))
 fi
@@ -111,13 +110,10 @@ gen_mod() {
 
     list_mods() {
         mod="$(grep '^1|' "${conf_ctl}" | cut -d '|' -f "${col}")"
-
         if [[ $1 == "clean" ]]; then
-            # Process each word and remove the part after '##' indicating a tag
             mod=$(echo "$mod" | awk '{for(i=1;i<=NF;i++){sub(/##.*/,"",$i); printf "%s ", $i}}')
             mod="${mod% }" # Remove trailing space
         fi
-
         mod="${mod//(/"custom/l_end"}"
         mod="${mod//)/"custom/r_end"}"
         mod="${mod//[/"custom/sl_end"}"
@@ -128,10 +124,8 @@ gen_mod() {
         echo -e "${mod}"
     }
 
-    write_mod="$write_mod $(list_mods)" # This is used to copy the modules to the config later
-
+    write_mod="$write_mod $(list_mods)"
     echo -e "\t\"modules-${pos}\": [\"custom/padd\",\"$(list_mods clean)\",\"custom/padd\"]," >>"${conf_file}"
-
 }
 
 # write positions for modules
@@ -152,12 +146,17 @@ done
 
 cat "${modules_dir}/footer.jsonc" >>"${conf_file}"
 
-# generate style
-
+# generate waybar style
 "$scrDir/wbarstylegen.sh"
 
-# restart waybar
+# generate swaync style
+mkdir -p "$swaync_dir"
+cat > "$swaync_css" << EOF
+@import "${waybar_dir}/theme.css";
+$(cat "${modules_dir}/style.css")
+EOF
 
+# restart waybar
 if [ "$reload_flag" == "1" ]; then
     killall waybar
     if [ -f "${waybar_dir}/config" ] && [ -s "${waybar_dir}/config" ]; then
@@ -167,5 +166,9 @@ if [ "$reload_flag" == "1" ]; then
         waybar --config "${waybar_dir}/config.jsonc" --style "${waybar_dir}/style.css" 2>&1 &
         disown
     fi
+fi
 
+# reload swaync
+if command -v swaync-client >/dev/null 2>&1; then
+    swaync-client -R
 fi
