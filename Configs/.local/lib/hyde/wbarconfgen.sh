@@ -406,6 +406,8 @@ if [ "$reload_flag" == "1" ]; then
 fi
 
 # reload swaync
-if command -v swaync-client >/dev/null 2>&1; then
-    swaync-client -R
+if command -v swaync >/dev/null 2>&1; then
+    killall swaync
+    swaync &
+    disown
 fi
