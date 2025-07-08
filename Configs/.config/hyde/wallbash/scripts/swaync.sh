@@ -4,24 +4,33 @@
 : "${XDG_CONFIG_HOME:=$HOME/.config}"
 GTK_CSS="$HOME/.cache/hyde/wallbash/gtk.css"
 SWAYNC_DCOL="$XDG_CONFIG_HOME/hyde/wallbash/always/swaync.dcol"
+OUTPUT_CSS="$XDG_CONFIG_HOME/swaync/style.css"
 DEBUG_LOG="$HOME/.cache/hyde/wallbash/swaync_debug.log"
+
+# Create debug log directory
+mkdir -p "$(dirname "$DEBUG_LOG")"
+echo "Starting swaync.sh at $(date)" > "$DEBUG_LOG"
 
 # Check if required files exist
 if [[ ! -f "$GTK_CSS" ]]; then
   echo "Error: $GTK_CSS not found" >&2
+  echo "Error: $GTK_CSS not found" >> "$DEBUG_LOG"
   exit 1
 fi
 if [[ ! -f "$SWAYNC_DCOL" ]]; then
   echo "Error: $SWAYNC_DCOL not found" >&2
+  echo "Error: $SWAYNC_DCOL not found" >> "$DEBUG_LOG"
   exit 1
 fi
 
 # Read output path from swaync.dcol
 OUTPUT_CSS=$(head -n 1 "$SWAYNC_DCOL" | sed "s|\${XDG_CONFIG_HOME}|$XDG_CONFIG_HOME|")
+echo "Output CSS path: $OUTPUT_CSS" >> "$DEBUG_LOG"
 
 # Function to resolve Wallbash colors from gtk.css
 resolve_color() {
   local color_key="$1"
+  echo "Resolving color: $color_key" >> "$DEBUG_LOG"
   if [[ "$color_key" =~ ^#[0-9a-fA-F]{6,8}$ ]]; then
     echo "$color_key"
     return
@@ -35,6 +44,7 @@ resolve_color() {
   fi
   if [[ -z "$color_value" || ! "$color_value" =~ ^#[0-9a-fA-F]{6,8}$ ]]; then
     echo "Error: Could not resolve color for $color_key in $GTK_CSS" >&2
+    echo "Error: Could not resolve color for $color_key in $GTK_CSS" >> "$DEBUG_LOG"
     exit 1
   fi
   echo "$color_value"
@@ -45,6 +55,7 @@ declare -A colors
 while IFS='=' read -r key value; do
   if [[ "$key" != "${XDG_CONFIG_HOME}/swaync/style.css" && -n "$key" ]]; then
     colors["$key"]=$(resolve_color "$value")
+    echo "Extracted $key=${colors[$key]}" >> "$DEBUG_LOG"
   fi
 done < <(tail -n +2 "$SWAYNC_DCOL")
 
@@ -56,6 +67,7 @@ required_colors=(
 for key in "${required_colors[@]}"; do
   if [[ -z "${colors[$key]}" ]]; then
     echo "Error: Missing color definition for $key in $SWAYNC_DCOL" >&2
+    echo "Error: Missing color definition for $key in $SWAYNC_DCOL" >> "$DEBUG_LOG"
     exit 1
   fi
 done
@@ -71,10 +83,17 @@ ERROR_FG=${colors[critical-foreground]}
 SECONDARY_TEXT=${colors[secondary-text]}
 MPRIS_GRADIENT=${colors[mpris-gradient]}
 
+# Log resolved colors
+echo "Resolved colors:" >> "$DEBUG_LOG"
+for key in "${!colors[@]}"; do
+  echo "$key=${colors[$key]}" >> "$DEBUG_LOG"
+done
+
 # Ensure output directory exists
 mkdir -p "$(dirname "$OUTPUT_CSS")"
 
 # Generate CSS file
+echo "Generating CSS at $OUTPUT_CSS" >> "$DEBUG_LOG"
 cat > "$OUTPUT_CSS" << EOF
 @define-color cc-bg $NOTIFICATIONS_BG;
 @define-color noti-border-color $NOTIFICATIONS_BORDER;
@@ -328,7 +347,13 @@ cat > "$OUTPUT_CSS" << EOF
 }
 EOF
 
+echo "CSS generated at $OUTPUT_CSS" >> "$DEBUG_LOG"
+
 # Reload swaync
 if command -v swaync-client >/dev/null 2>&1; then
   swaync-client -R
+  echo "swaync-client reloaded" >> "$DEBUG_LOG"
+else
+  echo "Warning: swaync-client not found" >&2
+  echo "Warning: swaync-client not found" >> "$DEBUG_LOG"
 fi
