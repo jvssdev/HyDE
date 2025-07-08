@@ -3,7 +3,6 @@
 # Define paths
 : "${XDG_CONFIG_HOME:=$HOME/.config}"
 GTK_CSS="$HOME/.cache/hyde/wallbash/gtk.css"
-SWAYNC_DCOL="$XDG_CONFIG_HOME/hyde/wallbash/always/swaync.dcol"
 OUTPUT_CSS="$XDG_CONFIG_HOME/swaync/style.css"
 DEBUG_LOG="$HOME/.cache/hyde/wallbash/swaync_debug.log"
 
@@ -17,15 +16,20 @@ if [[ ! -f "$GTK_CSS" ]]; then
   echo "Error: $GTK_CSS not found" >> "$DEBUG_LOG"
   exit 1
 fi
-if [[ ! -f "$SWAYNC_DCOL" ]]; then
-  echo "Error: $SWAYNC_DCOL not found" >&2
-  echo "Error: $SWAYNC_DCOL not found" >> "$DEBUG_LOG"
-  exit 1
-fi
 
-# Read output path from swaync.dcol
-OUTPUT_CSS=$(head -n 1 "$SWAYNC_DCOL" | sed "s|\${XDG_CONFIG_HOME}|$XDG_CONFIG_HOME|")
-echo "Output CSS path: $OUTPUT_CSS" >> "$DEBUG_LOG"
+# Embedded color definitions (from swaync.dcol)
+declare -A color_defs
+color_defs=(
+  ["background"]="#<wallbash_pry1>"
+  ["foreground"]="#<wallbash_txt1>"
+  ["border"]="#<wallbash_1xa8>"
+  ["button-background"]="#<wallbash_1xa8>"
+  ["button-foreground"]="#<wallbash_pry1>"
+  ["button-hover-background"]="#<wallbash_1xa7>"
+  ["critical-foreground"]="#<wallbash_4xa7>"
+  ["secondary-text"]="#<wallbash_1xa8>"
+  ["mpris-gradient"]="#<wallbash_1xa9>"
+)
 
 # Function to resolve Wallbash colors from gtk.css
 resolve_color() {
@@ -50,14 +54,12 @@ resolve_color() {
   echo "$color_value"
 }
 
-# Extract and resolve colors
+# Resolve colors
 declare -A colors
-while IFS='=' read -r key value; do
-  if [[ "$key" != "${XDG_CONFIG_HOME}/swaync/style.css" && -n "$key" ]]; then
-    colors["$key"]=$(resolve_color "$value")
-    echo "Extracted $key=${colors[$key]}" >> "$DEBUG_LOG"
-  fi
-done < <(tail -n +2 "$SWAYNC_DCOL")
+for key in "${!color_defs[@]}"; do
+  colors["$key"]=$(resolve_color "${color_defs[$key]}")
+  echo "Extracted $key=${colors[$key]}" >> "$DEBUG_LOG"
+done
 
 # Validate required colors
 required_colors=(
@@ -66,8 +68,8 @@ required_colors=(
 )
 for key in "${required_colors[@]}"; do
   if [[ -z "${colors[$key]}" ]]; then
-    echo "Error: Missing color definition for $key in $SWAYNC_DCOL" >&2
-    echo "Error: Missing color definition for $key in $SWAYNC_DCOL" >> "$DEBUG_LOG"
+    echo "Error: Missing color definition for $key" >&2
+    echo "Error: Missing color definition for $key" >> "$DEBUG_LOG"
     exit 1
   fi
 done
