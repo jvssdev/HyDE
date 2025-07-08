@@ -153,7 +153,247 @@ cat "${modules_dir}/footer.jsonc" >>"${conf_file}"
 mkdir -p "$swaync_dir"
 cat > "$swaync_css" << EOF
 @import "${waybar_dir}/theme.css";
-$(cat "${modules_dir}/style.css")
+
+* {
+    all: unset;
+    font-size: 14px;
+    font-family: "Maple Mono NF";
+    transition: 200ms;
+}
+
+/* Estilo para o centro de notificações */
+.control-center {
+  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.8), inset 0 0 0 1px @noti-border-color;
+  border-radius: 10px;
+  margin: 18px;
+  background-color: @cc-bg;
+  color: @text-color;
+  border: 2px solid @noti-border-color;
+  padding: 14px;
+  max-height: 80vh;
+}
+
+/* Estilo para o widget de notificações */
+.notification-group {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 5px;
+}
+
+/* Estilo para notificações individuais */
+.control-center .notification-row .notification-background {
+  border-radius: 7px;
+  color: @text-color;
+  background-color: @noti-bg;
+  box-shadow: inset 0 0 0 1px @noti-border-color;
+  margin-top: 10px;
+}
+
+.control-center .notification-row .notification-background .notification {
+  padding: 7px;
+  border-radius: 7px;
+}
+
+.control-center .notification-row .notification-background .notification.critical {
+  box-shadow: inset 0 0 7px 0 @critical-foreground;
+}
+
+.control-center .notification-row .notification-background .notification .notification-content {
+  margin: 7px;
+}
+
+.control-center .notification-row .notification-background .notification .notification-content .summary {
+  color: @text-color;
+}
+
+.control-center .notification-row .notification-background .notification .notification-content .time {
+  color: @secondary-text;
+}
+
+.control-center .notification-row .notification-background .notification .notification-content .body {
+  color: @text-color;
+}
+
+.control-center .notification-row .notification-background .notification > *:last-child > * {
+  min-height: 3.4em;
+}
+
+.control-center .notification-row .notification-background .notification > *:last-child > * .notification-action {
+  border-radius: 7px;
+  color: @button-foreground;
+  background-color: @button-background;
+  box-shadow: inset 0 0 0 1px @noti-border-color;
+  margin: 7px;
+}
+
+.control-center .notification-row .notification-background .notification > *:last-child > * .notification-action:hover {
+  box-shadow: inset 0 0 0 1px @noti-border-color;
+  background-color: @button-hover-background;
+  color: @button-foreground;
+}
+
+.control-center .notification-row .notification-background .notification > *:last-child > * .notification-action:active {
+  box-shadow: inset 0 0 0 1px @noti-border-color;
+  background-color: @button-hover-background;
+  color: @button-foreground;
+}
+
+.control-center .notification-row .notification-background .close-button {
+  margin: 7px;
+  padding: 2px;
+  border-radius: 6.3px;
+  color: @cc-bg;
+  background-color: @critical-foreground;
+}
+
+.control-center .notification-row .notification-background .close-button:hover {
+  background-color: @critical-foreground;
+  color: @cc-bg;
+}
+
+.control-center .notification-row .notification-background .close-button:active {
+  background-color: @critical-foreground;
+  color: @cc-bg;
+}
+
+.control-center .notification-row .notification-background:hover {
+  box-shadow: inset 0 0 0 1px @noti-border-color;
+  background-color: @noti-bg-hover;
+  color: @text-color;
+}
+
+.control-center .notification-row .notification-background:active {
+  box-shadow: inset 0 0 0 1px @noti-border-color;
+  background-color: @noti-bg-hover;
+  color: @text-color;
+}
+
+/* Estilo para o widget mpris */
+.widget-mpris {
+  background: linear-gradient(to right, @cc-bg, @mpris-gradient);
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.widget-mpris-player {
+  padding: 8px;
+  margin: 8px;
+}
+
+.widget-mpris-title {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: @text-color;
+}
+
+.widget-mpris-subtitle {
+  font-size: 1.1rem;
+  color: @secondary-text;
+}
+
+/* Estilo para botões do centro de notificações */
+.control-center .widget-title {
+  color: @text-color;
+  font-size: 1.3em;
+}
+
+.control-center .widget-title button {
+  border-radius: 7px;
+  color: @button-foreground;
+  background-color: @button-background;
+  box-shadow: inset 0 0 0 1px @noti-border-color;
+  padding: 8px;
+}
+
+.control-center .widget-title button:hover {
+  box-shadow: inset 0 0 0 1px @noti-border-color;
+  background-color: @button-hover-background;
+  color: @button-foreground;
+}
+
+.control-center .widget-title button:active {
+  box-shadow: inset 0 0 0 1px @noti-border-color;
+  background-color: @button-hover-background;
+  color: @button-foreground;
+}
+
+/* Estilo para notificações flutuantes */
+.floating-notifications.background .notification-row .notification-background {
+  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.8), inset 0 0 0 1px @noti-border-color;
+  border-radius: 10px;
+  margin: 18px;
+  background-color: @cc-bg;
+  color: @text-color;
+  border: 2px solid @noti-border-color;
+  padding: 0;
+}
+
+.floating-notifications.background .notification-row .notification-background .notification {
+  padding: 7px;
+  border-radius: 10px;
+}
+
+.floating-notifications.background .notification-row .notification-background .notification.critical {
+  box-shadow: inset 0 0 7px 0 @critical-foreground;
+}
+
+.floating-notifications.background .notification-row .notification-background .notification .notification-content {
+  margin: 7px;
+}
+
+.floating-notifications.background .notification-row .notification-background .notification .notification-content .summary {
+  color: @text-color;
+}
+
+.floating-notifications.background .notification-row .notification-background .notification .notification-content .time {
+  color: @secondary-text;
+}
+
+.floating-notifications.background .notification-row .notification-background .notification .notification-content .body {
+  color: @text-color;
+}
+
+.floating-notifications.background .notification-row .notification-background .notification > *:last-child > * {
+  min-height: 3.4em;
+}
+
+.floating-notifications.background .notification-row .notification-background .notification > *:last-child > * .notification-action {
+  border-radius: 7px;
+  color: @button-foreground;
+  background-color: @button-background;
+  box-shadow: inset 0 0 0 1px @noti-border-color;
+  margin: 7px;
+}
+
+.floating-notifications.background .notification-row .notification-background .notification > *:last-child > * .notification-action:hover {
+  box-shadow: inset 0 0 0 1px @noti-border-color;
+  background-color: @button-hover-background;
+  color: @button-foreground;
+}
+
+.floating-notifications.background .notification-row .notification-background .notification > *:last-child > * .notification-action:active {
+  box-shadow: inset 0 0 0 1px @noti-border-color;
+  background-color: @button-hover-background;
+  color: @button-foreground;
+}
+
+.floating-notifications.background .notification-row .notification-background .close-button {
+  margin: 7px;
+  padding: 2px;
+  border-radius: 6.3px;
+  color: @cc-bg;
+  background-color: @critical-foreground;
+}
+
+.floating-notifications.background .notification-row .notification-background .close-button:hover {
+  background-color: @critical-foreground;
+  color: @cc-bg;
+}
+
+.floating-notifications.background .notification-row .notification-background .close-button:active {
+  background-color: @critical-foreground;
+  color: @cc-bg;
+}
 EOF
 
 # restart waybar
