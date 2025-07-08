@@ -4,120 +4,77 @@
 : "${XDG_CONFIG_HOME:=$HOME/.config}"
 GTK_CSS="$HOME/.cache/hyde/wallbash/gtk.css"
 SWAYNC_DCOL="$XDG_CONFIG_HOME/hyde/wallbash/always/swaync.dcol"
-OUTPUT_CSS="$XDG_CONFIG_HOME/swaync/style.css"
-
-# Debug log file
 DEBUG_LOG="$HOME/.cache/hyde/wallbash/swaync_debug.log"
-mkdir -p "$(dirname "$DEBUG_LOG")"
-echo "Starting swaync.sh at $(date)" > "$DEBUG_LOG"
 
 # Check if required files exist
 if [[ ! -f "$GTK_CSS" ]]; then
   echo "Error: $GTK_CSS not found" >&2
-  echo "Error: $GTK_CSS not found" >> "$DEBUG_LOG"
   exit 1
 fi
 if [[ ! -f "$SWAYNC_DCOL" ]]; then
   echo "Error: $SWAYNC_DCOL not found" >&2
-  echo "Error: $SWAYNC_DCOL not found" >> "$DEBUG_LOG"
   exit 1
 fi
 
-# Read output path from the first line of swaync.dcol
+# Read output path from swaync.dcol
 OUTPUT_CSS=$(head -n 1 "$SWAYNC_DCOL" | sed "s|\${XDG_CONFIG_HOME}|$XDG_CONFIG_HOME|")
-echo "Output CSS path: $OUTPUT_CSS" >> "$DEBUG_LOG"
 
 # Function to resolve Wallbash colors from gtk.css
 resolve_color() {
   local color_key="$1"
-  echo "Resolving color: $color_key" >> "$DEBUG_LOG"
-  # If the color is a direct hexadecimal, return it
   if [[ "$color_key" =~ ^#[0-9a-fA-F]{6,8}$ ]]; then
     echo "$color_key"
     return
   fi
-  # Extract Wallbash variable name (e.g., wallbash_pry1 -> pry1)
   local var_name
   var_name=$(echo "$color_key" | sed 's/#<wallbash_\(.*\)>/\1/')
-  # Look up the value in gtk.css
   local color_value
   color_value=$(grep "@define-color wallbash_$var_name " "$GTK_CSS" | awk '{print $3}' | sed 's/;//')
-  # Handle transparency (e.g., #<wallbash_1xa8>33 -> #AADAF033)
   if [[ "$color_key" =~ ([0-9a-fA-F]{2})$ ]]; then
     color_value="${color_value}${BASH_REMATCH[1]}"
   fi
-  # Validate color value
   if [[ -z "$color_value" || ! "$color_value" =~ ^#[0-9a-fA-F]{6,8}$ ]]; then
     echo "Error: Could not resolve color for $color_key in $GTK_CSS" >&2
-    echo "Error: Could not resolve color for $color_key in $GTK_CSS" >> "$DEBUG_LOG"
     exit 1
   fi
-  echo "Resolved $color_key to $color_value" >> "$DEBUG_LOG"
   echo "$color_value"
 }
 
-# Extract colors from swaync.dcol, skipping the first line
-NOTIFICATIONS_BG=$(grep '^background=' "$SWAYNC_DCOL" | cut -d'=' -f2)
-NOTIFICATIONS_FG=$(grep '^foreground=' "$SWAYNC_DCOL" | cut -d'=' -f2)
-NOTIFICATIONS_BORDER=$(grep '^border=' "$SWAYNC_DCOL" | cut -d'=' -f2)
-BUTTON_BG=$(grep '^button-background=' "$SWAYNC_DCOL" | cut -d'=' -f2)
-BUTTON_FG=$(grep '^button-foreground=' "$SWAYNC_DCOL" | cut -d'=' -f2)
-BUTTON_HOVER_BG=$(grep '^button-hover-background=' "$SWAYNC_DCOL" | cut -d'=' -f2)
-ERROR_FG=$(grep '^critical-foreground=' "$SWAYNC_DCOL" | cut -d'=' -f2)
-SECONDARY_TEXT=$(grep '^secondary-text=' "$SWAYNC_DCOL" | cut -d'=' -f2)
-MPRIS_GRADIENT=$(grep '^mpris-gradient=' "$SWAYNC_DCOL" | cut -d'=' -f2)
+# Extract and resolve colors
+declare -A colors
+while IFS='=' read -r key value; do
+  if [[ "$key" != "${XDG_CONFIG_HOME}/swaync/style.css" && -n "$key" ]]; then
+    colors["$key"]=$(resolve_color "$value")
+  fi
+done < <(tail -n +2 "$SWAYNC_DCOL")
 
-# Log extracted colors
-echo "Extracted colors:" >> "$DEBUG_LOG"
-echo "NOTIFICATIONS_BG=$NOTIFICATIONS_BG" >> "$DEBUG_LOG"
-echo "NOTIFICATIONS_FG=$NOTIFICATIONS_FG" >> "$DEBUG_LOG"
-echo "NOTIFICATIONS_BORDER=$NOTIFICATIONS_BORDER" >> "$DEBUG_LOG"
-echo "BUTTON_BG=$BUTTON_BG" >> "$DEBUG_LOG"
-echo "BUTTON_FG=$BUTTON_FG" >> "$DEBUG_LOG"
-echo "BUTTON_HOVER_BG=$BUTTON_HOVER_BG" >> "$DEBUG_LOG"
-echo "ERROR_FG=$ERROR_FG" >> "$DEBUG_LOG"
-echo "SECONDARY_TEXT=$SECONDARY_TEXT" >> "$DEBUG_LOG"
-echo "MPRIS_GRADIENT=$MPRIS_GRADIENT" >> "$DEBUG_LOG"
-
-# Validate all required colors are present
-for color in "$NOTIFICATIONS_BG" "$NOTIFICATIONS_FG" "$NOTIFICATIONS_BORDER" \
-             "$BUTTON_BG" "$BUTTON_FG" "$BUTTON_HOVER_BG" "$ERROR_FG" \
-             "$SECONDARY_TEXT" "$MPRIS_GRADIENT"; do
-  if [[ -z "$color" ]]; then
-    echo "Error: Missing color definition in $SWAYNC_DCOL" >&2
-    echo "Error: Missing color definition in $SWAYNC_DCOL" >> "$DEBUG_LOG"
+# Validate required colors
+required_colors=(
+  background foreground border button-background button-foreground
+  button-hover-background critical-foreground secondary-text mpris-gradient
+)
+for key in "${required_colors[@]}"; do
+  if [[ -z "${colors[$key]}" ]]; then
+    echo "Error: Missing color definition for $key in $SWAYNC_DCOL" >&2
     exit 1
   fi
 done
 
-# Resolve colors
-NOTIFICATIONS_BG=$(resolve_color "$NOTIFICATIONS_BG")
-NOTIFICATIONS_FG=$(resolve_color "$NOTIFICATIONS_FG")
-NOTIFICATIONS_BORDER=$(resolve_color "$NOTIFICATIONS_BORDER")
-BUTTON_BG=$(resolve_color "$BUTTON_BG")
-BUTTON_FG=$(resolve_color "$BUTTON_FG")
-BUTTON_HOVER_BG=$(resolve_color "$BUTTON_HOVER_BG")
-ERROR_FG=$(resolve_color "$ERROR_FG")
-SECONDARY_TEXT=$(resolve_color "$SECONDARY_TEXT")
-MPRIS_GRADIENT=$(resolve_color "$MPRIS_GRADIENT")
-
-# Log resolved colors
-echo "Resolved colors:" >> "$DEBUG_LOG"
-echo "NOTIFICATIONS_BG=$NOTIFICATIONS_BG" >> "$DEBUG_LOG"
-echo "NOTIFICATIONS_FG=$NOTIFICATIONS_FG" >> "$DEBUG_LOG"
-echo "NOTIFICATIONS_BORDER=$NOTIFICATIONS_BORDER" >> "$DEBUG_LOG"
-echo "BUTTON_BG=$BUTTON_BG" >> "$DEBUG_LOG"
-echo "BUTTON_FG=$BUTTON_FG" >> "$DEBUG_LOG"
-echo "BUTTON_HOVER_BG=$BUTTON_HOVER_BG" >> "$DEBUG_LOG"
-echo "ERROR_FG=$ERROR_FG" >> "$DEBUG_LOG"
-echo "SECONDARY_TEXT=$SECONDARY_TEXT" >> "$DEBUG_LOG"
-echo "MPRIS_GRADIENT=$MPRIS_GRADIENT" >> "$DEBUG_LOG"
+# Assign resolved colors
+NOTIFICATIONS_BG=${colors[background]}
+NOTIFICATIONS_FG=${colors[foreground]}
+NOTIFICATIONS_BORDER=${colors[border]}
+BUTTON_BG=${colors[button-background]}
+BUTTON_FG=${colors[button-foreground]}
+BUTTON_HOVER_BG=${colors[button-hover-background]}
+ERROR_FG=${colors[critical-foreground]}
+SECONDARY_TEXT=${colors[secondary-text]}
+MPRIS_GRADIENT=${colors[mpris-gradient]}
 
 # Ensure output directory exists
 mkdir -p "$(dirname "$OUTPUT_CSS")"
 
 # Generate CSS file
-echo "Generating CSS at $OUTPUT_CSS" >> "$DEBUG_LOG"
 cat > "$OUTPUT_CSS" << EOF
 @define-color cc-bg $NOTIFICATIONS_BG;
 @define-color noti-border-color $NOTIFICATIONS_BORDER;
@@ -145,13 +102,13 @@ cat > "$OUTPUT_CSS" << EOF
   color: $NOTIFICATIONS_FG;
   border: 2px solid $NOTIFICATIONS_BORDER;
   padding: 14px;
-  max-height: 80vh; /* Limita a altura máxima a 80% da tela */
+  max-height: 80vh;
 }
 
 /* Estilo para o widget de notificações */
 .notification-group {
-  max-height: 400px; /* Altura máxima para o grupo de notificações */
-  overflow-y: auto; /* Ativa rolagem vertical */
+  max-height: 400px;
+  overflow-y: auto;
   padding: 5px;
 }
 
@@ -371,13 +328,7 @@ cat > "$OUTPUT_CSS" << EOF
 }
 EOF
 
-echo "CSS generated successfully at $OUTPUT_CSS" >> "$DEBUG_LOG"
-
-# Reload swaync to apply changes
+# Reload swaync
 if command -v swaync-client >/dev/null 2>&1; then
   swaync-client -R
-  echo "swaync-client reloaded" >> "$DEBUG_LOG"
-else
-  echo "Warning: swaync-client not found, CSS generated but not applied" >&2
-  echo "Warning: swaync-client not found" >> "$DEBUG_LOG"
 fi
