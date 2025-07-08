@@ -15,6 +15,7 @@ bluez-utils                                            # bluetooth utility cli
 blueman                                                # bluetooth manager gui
 brightnessctl                                          # screen brightness control
 udiskie                                                # manage removable media
+swaync                                                 # notification manager
 
 # --------------------------------------------------- // Display Manager
 sddm                                                   # display manager for KDE plasma
