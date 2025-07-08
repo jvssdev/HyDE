@@ -3,17 +3,19 @@
 # Define paths
 GTK_CSS="$HOME/.cache/hyde/wallbash/gtk.css"
 SWAYNC_DCOL="$HOME/.config/hyde/wallbash/always/swaync.dcol"
-OUTPUT_CSS="$HOME/.config/swaync/style.css"
 
 # Check if required files exist
 if [[ ! -f "$GTK_CSS" ]]; then
-  echo "Error: $GTK_CSS not found"
+  echo "Error: $GTK_CSS not found" >&2
   exit 1
 fi
 if [[ ! -f "$SWAYNC_DCOL" ]]; then
-  echo "Error: $SWAYNC_DCOL not found"
+  echo "Error: $SWAYNC_DCOL not found" >&2
   exit 1
 fi
+
+# Read output path from the first line of swaync.dcol
+OUTPUT_CSS=$(head -n 1 "$SWAYNC_DCOL" | sed "s|\${XDG_CONFIG_HOME}|$HOME|")
 
 # Function to resolve Wallbash colors from gtk.css
 resolve_color() {
@@ -42,15 +44,15 @@ resolve_color() {
 }
 
 # Extract colors from swaync.dcol
-NOTIFICATIONS_BG=$(grep '^background =' "$SWAYNC_DCOL" | awk '{print $3}')
-NOTIFICATIONS_FG=$(grep '^foreground =' "$SWAYNC_DCOL" | awk '{print $3}')
-NOTIFICATIONS_BORDER=$(grep '^border =' "$SWAYNC_DCOL" | awk '{print $3}')
-BUTTON_BG=$(grep '^button-background =' "$SWAYNC_DCOL" | awk '{print $3}')
-BUTTON_FG=$(grep '^button-foreground =' "$SWAYNC_DCOL" | awk '{print $3}')
-BUTTON_HOVER_BG=$(grep '^button-hover-background =' "$SWAYNC_DCOL" | awk '{print $3}')
-ERROR_FG=$(grep '^critical-foreground =' "$SWAYNC_DCOL" | awk '{print $3}')
-SECONDARY_TEXT=$(grep '^secondary-text =' "$SWAYNC_DCOL" | awk '{print $3}')
-MPRIS_GRADIENT=$(grep '^mpris-gradient =' "$SWAYNC_DCOL" | awk '{print $3}')
+NOTIFICATIONS_BG=$(grep '^background=' "$SWAYNC_DCOL" | cut -d'=' -f2)
+NOTIFICATIONS_FG=$(grep '^foreground=' "$SWAYNC_DCOL" | cut -d'=' -f2)
+NOTIFICATIONS_BORDER=$(grep '^border=' "$SWAYNC_DCOL" | cut -d'=' -f2)
+BUTTON_BG=$(grep '^button-background=' "$SWAYNC_DCOL" | cut -d'=' -f2)
+BUTTON_FG=$(grep '^button-foreground=' "$SWAYNC_DCOL" | cut -d'=' -f2)
+BUTTON_HOVER_BG=$(grep '^button-hover-background=' "$SWAYNC_DCOL" | cut -d'=' -f2)
+ERROR_FG=$(grep '^critical-foreground=' "$SWAYNC_DCOL" | cut -d'=' -f2)
+SECONDARY_TEXT=$(grep '^secondary-text=' "$SWAYNC_DCOL" | cut -d'=' -f2)
+MPRIS_GRADIENT=$(grep '^mpris-gradient=' "$SWAYNC_DCOL" | cut -d'=' -f2)
 
 # Validate all required colors are present
 for color in "$NOTIFICATIONS_BG" "$NOTIFICATIONS_FG" "$NOTIFICATIONS_BORDER" \
@@ -331,5 +333,5 @@ EOF
 if command -v swaync-client >/dev/null 2>&1; then
   swaync-client -R
 else
-  echo "Warning: swaync-client not found, CSS generated but not applied"
+  echo "Warning: swaync-client not found, CSS generated but not applied" >&2
 fi

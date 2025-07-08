@@ -1,29 +1,10 @@
-# Arquivo de configuração de cores para swaync
-# Usa variáveis Wallbash resolvidas a partir de ~/.cache/hyde/wallbash/gtk.css
-
-# Fundo do centro de notificações, notificações e fundo inicial do mpris
-background = #<wallbash_pry1>
-
-# Texto principal (títulos, corpo das notificações)
-foreground = #<wallbash_txt1>
-
-# Bordas do centro de notificações e notificações
-border = #<wallbash_1xa8>
-
-# Fundo dos botões (ações, botões do centro de notificações)
-button-background = #<wallbash_1xa8>
-
-# Texto dos botões
-button-foreground = #<wallbash_pry1>
-
-# Fundo dos botões em hover
-button-hover-background = #<wallbash_1xa7>
-
-# Cor para notificações críticas
-critical-foreground = #<wallbash_4xa7>
-
-# Texto secundário (ex.: hora nas notificações)
-secondary-text = #<wallbash_1xa8>
-
-# Segunda cor do gradiente do widget mpris
-mpris-gradient = #<wallbash_1xa9>pris-gradient = #<wallbash_1xa9>
+${XDG_CONFIG_HOME}/swaync/style.css
+background=#<wallbash_pry1>
+foreground=#<wallbash_txt1>
+border=#<wallbash_1xa8>
+button-background=#<wallbash_1xa8>
+button-foreground=#<wallbash_pry1>
+button-hover-background=#<wallbash_1xa7>
+critical-foreground=#<wallbash_4xa7>
+secondary-text=#<wallbash_1xa8>
+mpris-gradient=#<wallbash_1xa9>
