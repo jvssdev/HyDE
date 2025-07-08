@@ -166,7 +166,6 @@ cat > "$swaync_css" << EOF
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.8), inset 0 0 0 1px @main-fg;
   border-radius: 10px;
   margin: 18px;
-  backgroundഗ
   background-color: @bar-bg;
   color: @main-fg;
   border: 2px solid @main-fg;
