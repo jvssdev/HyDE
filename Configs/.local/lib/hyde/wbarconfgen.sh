@@ -163,12 +163,13 @@ cat > "$swaync_css" << EOF
 
 /* Estilo para o centro de notificações */
 .control-center {
-  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.8), inset 0 0 0 1px @noti-border-color;
+  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.8), inset 0 0 0 1px @main-fg;
   border-radius: 10px;
   margin: 18px;
-  background-color: @cc-bg;
-  color: @text-color;
-  border: 2px solid @noti-border-color;
+  backgroundഗ
+  background-color: @bar-bg;
+  color: @main-fg;
+  border: 2px solid @main-fg;
   padding: 14px;
   max-height: 80vh;
 }
@@ -183,9 +184,9 @@ cat > "$swaync_css" << EOF
 /* Estilo para notificações individuais */
 .control-center .notification-row .notification-background {
   border-radius: 7px;
-  color: @text-color;
-  background-color: @noti-bg;
-  box-shadow: inset 0 0 0 1px @noti-border-color;
+  color: @main-fg;
+  background-color: @main-bg;
+  box-shadow: inset 0 0 0 1px @main-fg;
   margin-top: 10px;
 }
 
@@ -195,7 +196,7 @@ cat > "$swaync_css" << EOF
 }
 
 .control-center .notification-row .notification-background .notification.critical {
-  box-shadow: inset 0 0 7px 0 @critical-foreground;
+  box-shadow: inset 0 0 7px 0 @wb-act-fg;
 }
 
 .control-center .notification-row .notification-background .notification .notification-content {
@@ -203,15 +204,15 @@ cat > "$swaync_css" << EOF
 }
 
 .control-center .notification-row .notification-background .notification .notification-content .summary {
-  color: @text-color;
+  color: @main-fg;
 }
 
 .control-center .notification-row .notification-background .notification .notification-content .time {
-  color: @secondary-text;
+  color: @wb-hvr-fg;
 }
 
 .control-center .notification-row .notification-background .notification .notification-content .body {
-  color: @text-color;
+  color: @main-fg;
 }
 
 .control-center .notification-row .notification-background .notification > *:last-child > * {
@@ -220,57 +221,57 @@ cat > "$swaync_css" << EOF
 
 .control-center .notification-row .notification-background .notification > *:last-child > * .notification-action {
   border-radius: 7px;
-  color: @button-foreground;
-  background-color: @button-background;
-  box-shadow: inset 0 0 0 1px @noti-border-color;
+  color: @wb-hvr-fg;
+  background-color: @wb-hvr-bg;
+  box-shadow: inset 0 0 0 1px @main-fg;
   margin: 7px;
 }
 
 .control-center .notification-row .notification-background .notification > *:last-child > * .notification-action:hover {
-  box-shadow: inset 0 0 0 1px @noti-border-color;
-  background-color: @button-hover-background;
-  color: @button-foreground;
+  box-shadow: inset 0 0 0 1px @main-fg;
+  background-color: @wb-act-bg;
+  color: @wb-hvr-fg;
 }
 
 .control-center .notification-row .notification-background .notification > *:last-child > * .notification-action:active {
-  box-shadow: inset 0 0 0 1px @noti-border-color;
-  background-color: @button-hover-background;
-  color: @button-foreground;
+  box-shadow: inset 0 0 0 1px @main-fg;
+  background-color: @wb-act-bg;
+  color: @wb-hvr-fg;
 }
 
 .control-center .notification-row .notification-background .close-button {
   margin: 7px;
   padding: 2px;
   border-radius: 6.3px;
-  color: @cc-bg;
-  background-color: @critical-foreground;
+  color: @bar-bg;
+  background-color: @wb-act-fg;
 }
 
 .control-center .notification-row .notification-background .close-button:hover {
-  background-color: @critical-foreground;
-  color: @cc-bg;
+  background-color: @wb-act-bg;
+  color: @bar-bg;
 }
 
 .control-center .notification-row .notification-background .close-button:active {
-  background-color: @critical-foreground;
-  color: @cc-bg;
+  background-color: @wb-act-bg;
+  color: @bar-bg;
 }
 
 .control-center .notification-row .notification-background:hover {
-  box-shadow: inset 0 0 0 1px @noti-border-color;
-  background-color: @noti-bg-hover;
-  color: @text-color;
+  box-shadow: inset 0 0 0 1px @main-fg;
+  background-color: @wb-hvr-bg;
+  color: @main-fg;
 }
 
 .control-center .notification-row .notification-background:active {
-  box-shadow: inset 0 0 0 1px @noti-border-color;
-  background-color: @noti-bg-hover;
-  color: @text-color;
+  box-shadow: inset 0 0 0 1px @main-fg;
+  background-color: @wb-hvr-bg;
+  color: @main-fg;
 }
 
 /* Estilo para o widget mpris */
 .widget-mpris {
-  background: linear-gradient(to right, @cc-bg, @mpris-gradient);
+  background: linear-gradient(to right, @bar-bg, @wb-act-bg);
   padding: 10px;
   border-radius: 10px;
 }
@@ -283,48 +284,48 @@ cat > "$swaync_css" << EOF
 .widget-mpris-title {
   font-weight: 700;
   font-size: 1.25rem;
-  color: @text-color;
+  color: @main-fg;
 }
 
 .widget-mpris-subtitle {
   font-size: 1.1rem;
-  color: @secondary-text;
+  color: @wb-hvr-fg;
 }
 
 /* Estilo para botões do centro de notificações */
 .control-center .widget-title {
-  color: @text-color;
+  color: @main-fg;
   font-size: 1.3em;
 }
 
 .control-center .widget-title button {
   border-radius: 7px;
-  color: @button-foreground;
-  background-color: @button-background;
-  box-shadow: inset 0 0 0 1px @noti-border-color;
+  color: @wb-hvr-fg;
+  background-color: @wb-hvr-bg;
+  box-shadow: inset 0 0 0 1px @main-fg;
   padding: 8px;
 }
 
 .control-center .widget-title button:hover {
-  box-shadow: inset 0 0 0 1px @noti-border-color;
-  background-color: @button-hover-background;
-  color: @button-foreground;
+  box-shadow: inset 0 0 0 1px @main-fg;
+  background-color: @wb-act-bg;
+  color: @wb-hvr-fg;
 }
 
 .control-center .widget-title button:active {
-  box-shadow: inset 0 0 0 1px @noti-border-color;
-  background-color: @button-hover-background;
-  color: @button-foreground;
+  box-shadow: inset 0 0 0 1px @main-fg;
+  background-color: @wb-act-bg;
+  color: @wb-hvr-fg;
 }
 
 /* Estilo para notificações flutuantes */
 .floating-notifications.background .notification-row .notification-background {
-  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.8), inset 0 0 0 1px @noti-border-color;
+  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.8), inset 0 0 0 1px @main-fg;
   border-radius: 10px;
   margin: 18px;
-  background-color: @cc-bg;
-  color: @text-color;
-  border: 2px solid @noti-border-color;
+  background-color: @bar-bg;
+  color: @main-fg;
+  border: 2px solid @main-fg;
   padding: 0;
 }
 
@@ -334,7 +335,7 @@ cat > "$swaync_css" << EOF
 }
 
 .floating-notifications.background .notification-row .notification-background .notification.critical {
-  box-shadow: inset 0 0 7px 0 @critical-foreground;
+  box-shadow: inset 0 0 7px 0 @wb-act-fg;
 }
 
 .floating-notifications.background .notification-row .notification-background .notification .notification-content {
@@ -342,15 +343,15 @@ cat > "$swaync_css" << EOF
 }
 
 .floating-notifications.background .notification-row .notification-background .notification .notification-content .summary {
-  color: @text-color;
+  color: @main-fg;
 }
 
 .floating-notifications.background .notification-row .notification-background .notification .notification-content .time {
-  color: @secondary-text;
+  color: @wb-hvr-fg;
 }
 
 .floating-notifications.background .notification-row .notification-background .notification .notification-content .body {
-  color: @text-color;
+  color: @main-fg;
 }
 
 .floating-notifications.background .notification-row .notification-background .notification > *:last-child > * {
@@ -359,40 +360,40 @@ cat > "$swaync_css" << EOF
 
 .floating-notifications.background .notification-row .notification-background .notification > *:last-child > * .notification-action {
   border-radius: 7px;
-  color: @button-foreground;
-  background-color: @button-background;
-  box-shadow: inset 0 0 0 1px @noti-border-color;
+  color: @wb-hvr-fg;
+  background-color: @wb-hvr-bg;
+  box-shadow: inset 0 0 0 1px @main-fg;
   margin: 7px;
 }
 
 .floating-notifications.background .notification-row .notification-background .notification > *:last-child > * .notification-action:hover {
-  box-shadow: inset 0 0 0 1px @noti-border-color;
-  background-color: @button-hover-background;
-  color: @button-foreground;
+  box-shadow: inset 0 0 0 1px @main-fg;
+  background-color: @wb-act-bg;
+  color: @wb-hvr-fg;
 }
 
 .floating-notifications.background .notification-row .notification-background .notification > *:last-child > * .notification-action:active {
-  box-shadow: inset 0 0 0 1px @noti-border-color;
-  background-color: @button-hover-background;
-  color: @button-foreground;
+  box-shadow: inset 0 0 0 1px @main-fg;
+  background-color: @wb-act-bg;
+  color: @wb-hvr-fg;
 }
 
 .floating-notifications.background .notification-row .notification-background .close-button {
   margin: 7px;
   padding: 2px;
   border-radius: 6.3px;
-  color: @cc-bg;
-  background-color: @critical-foreground;
+  color: @bar-bg;
+  background-color: @wb-act-fg;
 }
 
 .floating-notifications.background .notification-row .notification-background .close-button:hover {
-  background-color: @critical-foreground;
-  color: @cc-bg;
+  background-color: @wb-act-bg;
+  color: @bar-bg;
 }
 
 .floating-notifications.background .notification-row .notification-background .close-button:active {
-  background-color: @critical-foreground;
-  color: @cc-bg;
+  background-color: @wb-act-bg;
+  color: @bar-bg;
 }
 EOF
 
