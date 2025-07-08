@@ -43,7 +43,7 @@ resolve_color() {
   echo "$color_value"
 }
 
-# Extract colors from swaync.dcol
+# Extract colors from swaync.dcol, skipping the first line
 NOTIFICATIONS_BG=$(grep '^background=' "$SWAYNC_DCOL" | cut -d'=' -f2)
 NOTIFICATIONS_FG=$(grep '^foreground=' "$SWAYNC_DCOL" | cut -d'=' -f2)
 NOTIFICATIONS_BORDER=$(grep '^border=' "$SWAYNC_DCOL" | cut -d'=' -f2)
@@ -74,6 +74,9 @@ BUTTON_HOVER_BG=$(resolve_color "$BUTTON_HOVER_BG")
 ERROR_FG=$(resolve_color "$ERROR_FG")
 SECONDARY_TEXT=$(resolve_color "$SECONDARY_TEXT")
 MPRIS_GRADIENT=$(resolve_color "$MPRIS_GRADIENT")
+
+# Ensure output directory exists
+mkdir -p "$(dirname "$OUTPUT_CSS")"
 
 # Generate CSS file
 cat > "$OUTPUT_CSS" << EOF
