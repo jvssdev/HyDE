@@ -9,6 +9,7 @@ source "${scrDir}/globalcontrol.sh"
 [ -z "${HYDE_THEME}" ] && echo "ERROR: unable to detect theme" && exit 1
 get_themes
 confDir="${XDG_CONFIG_HOME:-$(xdg-user-dir CONFIG)}"
+
 #// define functions
 
 Theme_Change() {
@@ -57,24 +58,20 @@ sanitize_hypr_theme() {
   done
   cat "${buffer_file}" >"${output_file}"
   rm -f "${buffer_file}"
-
 }
 
 #// evaluate options
 quiet=false
 while getopts "qnps:" option; do
   case $option in
-
   n) # set next theme
     Theme_Change n
     export xtrans="grow"
     ;;
-
   p) # set previous theme
     Theme_Change p
     export xtrans="outer"
     ;;
-
   s) # set selected theme
     themeSet="$OPTARG" ;;
   q)
@@ -136,46 +133,32 @@ if [ ! -d "${themesDir}/${GTK_THEME}" ] && [ -d "$HOME/.themes/${GTK_THEME}" ]; 
 fi
 
 #// qt5ct
-
 toml_write "${confDir}/qt5ct/qt5ct.conf" "Appearance" "icon_theme" "${GTK_ICON}"
 toml_write "${confDir}/qt5ct/qt5ct.conf" "Fonts" "general" "\"${font_name},10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,\""
 toml_write "${confDir}/qt5ct/qt5ct.conf" "Fonts" "fixed" "\"${monospace_font_name},9,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,\""
-# toml_write "${confDir}/qt5ct/qt5ct.conf" "Appearance" "color_scheme_path" "${confDir}/qt5ct/colors/colors.conf"
-# toml_write "${confDir}/qt5ct/qt5ct.conf" "Appearance" "custom_palette" "true"
 
 # // qt6ct
-
 toml_write "${confDir}/qt6ct/qt6ct.conf" "Appearance" "icon_theme" "${GTK_ICON}"
 toml_write "${confDir}/qt6ct/qt6ct.conf" "Fonts" "general" "\"${font_name},10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,\""
 toml_write "${confDir}/qt6ct/qt6ct.conf" "Fonts" "fixed" "\"${monospace_font_name},9,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,\""
-# toml_write "${confDir}/qt6ct/qt6ct.conf" "Appearance" "color_scheme_path" "${confDir}/qt6ct/colors/colors.conf"
-# toml_write "${confDir}/qt6ct/qt6ct.conf" "Appearance" "custom_palette" "true"
 
 # // kde plasma
-
 toml_write "${confDir}/kdeglobals" "Icons" "Theme" "${GTK_ICON}"
 toml_write "${confDir}/kdeglobals" "General" "TerminalApplication" "${TERMINAL}"
 toml_write "${confDir}/kdeglobals" "UiSettings" "ColorScheme" "colors"
-
-# For KDE stuff
-
 toml_write "${confDir}/kdeglobals" "KDE" "widgetStyle" "kvantum"
-# toml_write "${confDir}/kdeglobals" "Colors:View" "BackgroundNormal" "#00000000" #! This is set on wallbash
 
 # // The default cursor theme // fallback
-
 toml_write "${XDG_DATA_HOME}/icons/default/index.theme" "Icon Theme" "Inherits" "${CURSOR_THEME}"
 toml_write "${HOME}/.icons/default/index.theme" "Icon Theme" "Inherits" "${CURSOR_THEME}"
 
 # // gtk2
-
 sed -i -e "/^gtk-theme-name=/c\gtk-theme-name=\"${GTK_THEME}\"" \
   -e "/^include /c\include \"$HOME/.gtkrc-2.0.mime\"" \
   -e "/^gtk-cursor-theme-name=/c\gtk-cursor-theme-name=\"${CURSOR_THEME}\"" \
   -e "/^gtk-icon-theme-name=/c\gtk-icon-theme-name=\"${GTK_ICON}\"" "$HOME/.gtkrc-2.0"
 
 #// gtk3
-
 toml_write "${confDir}/gtk-3.0/settings.ini" "Settings" "gtk-theme-name" "${GTK_THEME}"
 toml_write "${confDir}/gtk-3.0/settings.ini" "Settings" "gtk-icon-theme-name" "${GTK_ICON}"
 toml_write "${confDir}/gtk-3.0/settings.ini" "Settings" "gtk-cursor-theme-name" "${CURSOR_THEME}"
@@ -192,7 +175,6 @@ rm -rf "${confDir}/gtk-4.0"
 ln -s "${themesDir}/${gtk4Theme}/gtk-4.0" "${confDir}/gtk-4.0"
 
 #// flatpak GTK
-
 if pkg_installed flatpak; then
   flatpak \
     --user override \
@@ -202,19 +184,16 @@ if pkg_installed flatpak; then
     --filesystem="$HOME/.local/share/icons":ro \
     --env=GTK_THEME="${gtk4Theme}" \
     --env=ICON_THEME="${GTK_ICON}"
-
   flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo &
-
 fi
-# // xsettingsd
 
+# // xsettingsd
 sed -i -e "/^Net\/ThemeName /c\Net\/ThemeName \"${GTK_THEME}\"" \
   -e "/^Net\/IconThemeName /c\Net\/IconThemeName \"${GTK_ICON}\"" \
   -e "/^Gtk\/CURSOR_THEMEName /c\Gtk\/CURSOR_THEMEName \"${CURSOR_THEME}\"" \
   "$confDir/xsettingsd/xsettingsd.conf"
 
 # // Legacy themes using ~/.themes also fixed GTK4 not following xdg
-
 if [ ! -L "$HOME/.themes/${GTK_THEME}" ] && [ -d "${themesDir}/${GTK_THEME}" ]; then
   print_log -sec "theme" -warn "linking" "${GTK_THEME} to ~/.themes to fix GTK4 not following xdg"
   mkdir -p "$HOME/.themes"
@@ -239,4 +218,28 @@ if [ "$quiet" = true ]; then
   "${scrDir}/wallpaper.sh" -s "$(readlink "${HYDE_THEME_DIR}/wall.set")" --global >/dev/null 2>&1
 else
   "${scrDir}/wallpaper.sh" -s "$(readlink "${HYDE_THEME_DIR}/wall.set")" --global
+fi
+
+#// Apply ZenBash.sh and color.set.sh for theme-specific settings
+zenbash_script="${HOME}/.config/hyde/wallbash/scripts/ZenBash.sh"
+if [[ -f "${zenbash_script}" ]]; then
+  if [[ ! -x "${zenbash_script}" ]]; then
+    chmod +x "${zenbash_script}"
+    print_log -sec "theme" -stat "chmod" "Made ZenBash.sh executable"
+  fi
+  if [ "$quiet" = true ]; then
+    bash "${zenbash_script}" >/dev/null 2>&1
+  else
+    bash "${zenbash_script}"
+  fi
+else
+  print_log -sec "theme" -warn "ZenBash.sh not found"
+fi
+
+if [ "$quiet" = true ]; then
+  bash "${scrDir}/color.set.sh" --single "${HOME}/.config/hyde/wallbash/always/zen#Chrome.dcol" >/dev/null 2>&1
+  bash "${scrDir}/color.set.sh" --single "${HOME}/.config/hyde/wallbash/always/zen#Content.dcol" >/dev/null 2>&1
+else
+  bash "${scrDir}/color.set.sh" --single "${HOME}/.config/hyde/wallbash/always/zen#Chrome.dcol"
+  bash "${scrDir}/color.set.sh" --single "${HOME}/.config/hyde/wallbash/always/zen#Content.dcol"
 fi
