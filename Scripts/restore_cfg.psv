@@ -84,6 +84,11 @@ S|${HOME}/.config/ghostty|config ghostty.dcol hyde|ghostty
 
 S|${HOME}/.config/foot|foot.dcol foot.ini|foot
 
+ Music 
+S|${HOME}/.config/mpd|mpd.conf|mpd
+S|${HOME}/.config/rmpc/themes|custom.ron|rmpc
+S|${HOME}/.config/rmpc|config.ron|rmpc
+
  Shell 
 P|${HOME}/.config|fish|fish
 P|${HOME}|.zshrc .user.zsh|zsh  

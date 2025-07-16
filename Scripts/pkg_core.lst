@@ -17,6 +17,10 @@ brightnessctl                                          # screen brightness contr
 udiskie                                                # manage removable media
 swaync                                                 # notification manager
 
+mpd-mpris
+mpc
+rmpc
+mpd
 # --------------------------------------------------- // Display Manager
 sddm                                                   # display manager for KDE plasma
 qt5-quickcontrols                                      # for sddm theme ui elements
