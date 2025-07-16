@@ -86,6 +86,7 @@ S|${HOME}/.config/foot|foot.dcol foot.ini|foot
 
  Music 
 S|${HOME}/.config/mpd|mpd.conf|mpd
+P|${HOME}/.config/mpd|mpd.db mpd.log mpd.pid mpdstate|mpd
 S|${HOME}/.config/rmpc/themes|custom.ron|rmpc
 S|${HOME}/.config/rmpc|config.ron|rmpc
 
