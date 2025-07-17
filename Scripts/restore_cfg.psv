@@ -88,7 +88,6 @@ P|${HOME}/.config/yazi|yazi.toml|yazi
 
  Music 
 S|${HOME}/.config/mpd|mpd.conf|mpd
-P|${HOME}/.config/mpd|mpd.db mpd.log mpd.pid mpdstate|mpd
 S|${HOME}/.config/rmpc/themes|custom.ron|rmpc
 S|${HOME}/.config/rmpc|config.ron|rmpc
 
