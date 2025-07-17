@@ -268,25 +268,66 @@ cat > "$swaync_css" << EOF
 /* Estilo para o widget mpris */
 .widget-mpris {
     background: linear-gradient(to right, @bar-bg, @wb-act-bg);
-    padding: 10px;
     border-radius: 10px;
+    display: flex;
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center; /* Centraliza verticalmente */
 }
 
+/* Estilo para o container do player */
 .widget-mpris-player {
-    padding: 8px;
-    margin: 8px;
+    margin: 0px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column; /* Organiza o conteúdo em coluna */
+    align-items: center; /* Centraliza os elementos filhos horizontalmente */
+    justify-content: center; /* Centraliza os elementos filhos verticalmente */
+    width: 100%; /* Ocupa toda a largura do widget MPRIS */
+    height: 100%; /* Ocupa toda a altura do widget MPRIS */
+    padding: 10px; /* Espaço interno para evitar que o conteúdo toque as bordas */
+    box-sizing: border-box; /* Garante que padding não aumente o tamanho total */
 }
-
+/* Estilo para o título do player */
 .widget-mpris-title {
     font-weight: 700;
     font-size: 1.25rem;
-    color: @main-fg;
+    color: @wb-hvr-bg;
+    border-radius: 10px;
+    text-align: center; /* Garante que o texto do título esteja centralizado */
 }
 
+/* Estilo para o subtítulo */
 .widget-mpris-subtitle {
     font-size: 1.1rem;
     color: @wb-hvr-fg;
+    text-align: center; /* Garante que o subtítulo esteja centralizado */
 }
+
+/* Estilo para os botões do MPRIS (play/pause, previous, next) */
+.widget-mpris button {
+    padding: 12px; /* Aumenta o espaço interno dos botões */
+    margin: 5px; /* Espaço entre os botões */
+    min-width: 12px; /* Largura mínima maior para os botões */
+    min-height: 12px; /* Altura mínima maior para os botões */
+    border-radius: 8px; /* Bordas arredondadas para os botões */
+    background: @wb-act-fg; /* Usa a cor de fundo ativa */
+    color: @wb-act-bg; /* Cor do ícone/texto */
+}
+
+/* Estilo para os botões específicos (opcional, para personalização extra) */
+.widget-mpris button.play,
+.widget-mpris button.previous,
+.widget-mpris button.next {
+    transition: all 0.2s ease; /* Animação suave ao interagir */
+}
+
+/* Efeito ao passar o mouse sobre os botões */
+.widget-mpris button:hover {
+    background: @wb-hvr-bg; /* Cor de fundo ao passar o mouse */
+    color: @wb-hvr-fg; /* Cor do ícone/texto ao passar o mouse */
+}}
+
+
 
 /* Estilo para botões do centro de notificações */
 .control-center .widget-title {

@@ -2,8 +2,8 @@
   "$schema": "/etc/xdg/swaync/configSchema.json",
   "positionX": "right",
   "positionY": "bottom",
-  "layer": "top",
-  "cssPriority": "application",
+  "layer": "overlay",
+  "cssPriority": "user",
   "control-center-margin-top": 0,
   "control-center-margin-bottom": 0,
   "control-center-margin-right": 0,
@@ -29,9 +29,6 @@
       "text": "Notifications",
       "clear-all-button": true,
       "button-text": "Clear All"
-    },
-    "dnd": {
-      "text": "Do Not Disturb"
     },
     "label": {
       "max-lines": 1,
