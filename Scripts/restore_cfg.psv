@@ -84,6 +84,8 @@ S|${HOME}/.config/ghostty|config ghostty.dcol hyde|ghostty
 
 S|${HOME}/.config/foot|foot.dcol foot.ini|foot
 
+P|${HOME}/.config/yazi|yazi.toml|yazi
+
  Music 
 S|${HOME}/.config/mpd|mpd.conf|mpd
 P|${HOME}/.config/mpd|mpd.db mpd.log mpd.pid mpdstate|mpd
